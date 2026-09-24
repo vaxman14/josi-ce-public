@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* The official Josi palette: deep navy, orange/gold. Locked on 2026-08-30 and
+   not a self-hoster's to replace — see the branding note in the README. */
+@layer base {
+  :root {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 96%;
+    --card: 222 44% 11%;
+    --card-foreground: 210 40% 96%;
+    --primary: 28 92% 54%;          /* Josi orange */
+    --primary-foreground: 222 47% 8%;
+    --secondary: 222 32% 18%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 222 30% 16%;
+    --muted-foreground: 215 20% 68%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 28% 20%;
+    --input: 222 28% 22%;
+    --ring: 28 92% 54%;
+    --radius: 0.75rem;
+  }
+
+  * { @apply border-border; }
+
+  html, body, #root { height: 100%; overflow-x: clip; max-width: 100%; }
+
+  body {
+    @apply bg-background text-foreground;
+    /* Nothing may scroll sideways on a phone. This is the backstop; the
+       layout is built not to need it, and the e2e suite measures it. */
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Every interactive control clears the 44px iOS tap target. Written once
+     here rather than remembered at each call site. */
+  button, a[role='button'], [type='submit'] { touch-action: manipulation; }
+
+  :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background; }
+
+  /* The textarea already has a visible caret and sits inside a bordered
+     composer.  Ringing its full rounded parent made an orange rectangle flash
+     around the whole message box on every click.  Keep keyboard focus visible
+     on the textarea itself without repainting the container. */
+  .talk-composer:focus-within { box-shadow: none; outline: none; }
+  .talk-composer textarea:focus-visible {
+    box-shadow: inset 0 -2px 0 hsl(var(--ring) / 0.75);
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-ring-offset-shadow: 0 0 #0000;
+  }
+
+  /* Time-grid events are sized by their actual calendar interval. Never let
+     their content establish a larger box or create a nested scroll surface. */
+  .calendar-time-event {
+    @apply absolute min-w-0 overflow-hidden p-px;
+    contain: layout paint;
+    container-name: calendar-event;
+    container-type: size;
+  }
+
+  /* FullCalendar's time-grid proportions: a full civil day is tall enough
+     that a normal half-hour event gets about 48px instead of a tiny scrollbox. */
+  .calendar-time-grid-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+    overscroll-behavior-x: contain;
+  }
+
+  .calendar-time-grid { min-width: 0; }
+
+  .calendar-all-day-event {
+    @apply block h-11 min-w-0 w-full overflow-hidden px-1.5 py-1 text-xs leading-none focus-visible:ring-inset;
+    background: color-mix(in srgb, var(--calendar-event-color, #7c3aed) 26%, hsl(var(--background)));
+    border-color: color-mix(in srgb, var(--calendar-event-color, #7c3aed) 60%, hsl(var(--border)));
+  }
+
+  .calendar-event-card {
+    @apply block h-full min-h-0 w-full min-w-0 overflow-hidden px-1.5 py-1 text-xs leading-[1.25] focus-visible:ring-inset;
+    background: color-mix(in srgb, var(--calendar-event-color, #7c3aed) 26%, hsl(var(--background)));
+    border-color: color-mix(in srgb, var(--calendar-event-color, #7c3aed) 60%, hsl(var(--border)));
+    max-height: 100%;
+    touch-action: manipulation;
+  }
+
+  .calendar-event-title,
+  .calendar-event-time,
+  .calendar-event-metadata {
+    max-width: 100%;
+  }
+
+  .calendar-event-title {
+    @apply block overflow-hidden text-ellipsis whitespace-nowrap font-semibold;
+  }
+
+  /* Very short slots retain the full accessible name but show only the title.
+     At FullCalendar-like 96px/hour, 30 minutes fits time + title naturally. */
+  .calendar-event-time,
+  .calendar-event-metadata { display: none; }
+
+  @container calendar-event (min-height: 2.5rem) {
+    .calendar-event-time {
+      @apply block overflow-hidden text-ellipsis whitespace-nowrap tabular-nums;
+    }
+  }
+
+  @container calendar-event (min-height: 4.5rem) {
+    .calendar-event-title {
+      display: -webkit-box;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+  }
+
+  @container calendar-event (min-height: 6rem) {
+    .calendar-event-metadata {
+      @apply block overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground;
+    }
+  }
+}

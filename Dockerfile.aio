@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1
+
+# Browser-first appliance controller for the published Josi CE stack. It owns
+# Docker lifecycle authority; the normal Josi application never receives the
+# daemon socket.
+FROM docker:29-cli
+
+ARG JOSI_VERSION=0.1.0
+ENV JOSI_VERSION=$JOSI_VERSION
+
+RUN apk add --no-cache bash openssl python3 iproute2
+
+COPY docker-compose.release.yml /opt/josi-ce-release/docker-compose.yml
+COPY docker-compose.noproxy.yml /opt/josi-ce-release/docker-compose.noproxy.yml
+COPY Caddyfile /opt/josi-ce-release/Caddyfile
+COPY .env.example /opt/josi-ce-release/.env.example
+COPY scripts/install.sh /opt/josi-ce-release/install.sh
+COPY scripts/preflight.sh /opt/josi-ce-release/preflight.sh
+COPY scripts/josi /opt/josi-ce-release/josi
+COPY scripts/reset-password.sh /opt/josi-ce-release/reset-password.sh
+COPY scripts/aio-install.sh /usr/local/bin/josi-ce-aio-install
+COPY services/installer/controller.py /opt/josi-installer/controller.py
+COPY services/installer/coding_helper.py /opt/josi-installer/coding_helper.py
+COPY services/installer/storage_helper.py /opt/josi-installer/storage_helper.py
+COPY services/installer/maintenance_helper.py /opt/josi-installer/maintenance_helper.py
+COPY services/installer/index.html /opt/josi-installer/index.html
+COPY services/voice-box/host_helper.py services/voice-box/settings.py services/voice-box/bounded_http.py services/voice-box/unix_http.py services/voice-box/catalog.json /opt/josi-voice-box/
+
+RUN chmod 0755 \
+      /opt/josi-ce-release/install.sh \
+      /opt/josi-ce-release/preflight.sh \
+      /opt/josi-ce-release/josi \
+      /opt/josi-ce-release/reset-password.sh \
+      /usr/local/bin/josi-ce-aio-install
+
+ENTRYPOINT ["/usr/local/bin/josi-ce-aio-install"]

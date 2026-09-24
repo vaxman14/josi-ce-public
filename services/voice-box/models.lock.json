@@ -1,0 +1,137 @@
+{
+  "files": [
+    {
+      "path": "kokoro/model.onnx",
+      "url": "https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/1939ad2a8e416c0acfeecc08a694d14ef25f2231/onnx/model_quantized.onnx",
+      "sha256": "fbae9257e1e05ffc727e951ef9b9c98418e6d79f1c9b6b13bd59f5c9028a1478",
+      "size": 92361116,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "kokoro/af_heart.bin",
+      "url": "https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/1939ad2a8e416c0acfeecc08a694d14ef25f2231/voices/af_heart.bin",
+      "sha256": "d583ccff3cdca2f7fae535cb998ac07e9fcb90f09737b9a41fa2734ec44a8f0b",
+      "size": 522240,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "kokoro/af_bella.bin",
+      "url": "https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/1939ad2a8e416c0acfeecc08a694d14ef25f2231/voices/af_bella.bin",
+      "sha256": "f69d836209b78eb8c66e75e3cda491e26ea838a3674257e9d4e5703cbaf55c8b",
+      "size": 522240,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "licenses/kokoro-onnx-model.md",
+      "url": "https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/1939ad2a8e416c0acfeecc08a694d14ef25f2231/README.md",
+      "sha256": "b8fd888b4782f4d4ae85e2f1587cafd727037f4f138f72429ef1bd5908c0e9d8",
+      "size": 10627,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "kokoro/config.json",
+      "url": "https://huggingface.co/hexgrad/Kokoro-82M/resolve/f3ff3571791e39611d31c381e3a41a3af07b4987/config.json",
+      "sha256": "5abb01e2403b072bf03d04fde160443e209d7a0dad49a423be15196b9b43c17f",
+      "size": 2351,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "licenses/kokoro-model.md",
+      "url": "https://huggingface.co/hexgrad/Kokoro-82M/resolve/f3ff3571791e39611d31c381e3a41a3af07b4987/README.md",
+      "sha256": "91dcabced89db6f109b8786642f50402d3ee87450e8189589b6f85520e7f4d78",
+      "size": 6348,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "base.en/model.bin",
+      "url": "https://huggingface.co/Systran/faster-whisper-base.en/resolve/3d3d5dee26484f91867d81cb899cfcf72b96be6c/model.bin",
+      "sha256": "2a166925539a16005f14ff328359f9b9adb9dc4fb631bb3b227526862e93e2ef",
+      "size": 145216508,
+      "license": "MIT"
+    },
+    {
+      "path": "base.en/config.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-base.en/resolve/3d3d5dee26484f91867d81cb899cfcf72b96be6c/config.json",
+      "sha256": "f3bc3821e9fc76a27bae538e11ae5b677dcdd352b4600429ce7951d398569aeb",
+      "size": 2227,
+      "license": "MIT"
+    },
+    {
+      "path": "base.en/tokenizer.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-base.en/resolve/3d3d5dee26484f91867d81cb899cfcf72b96be6c/tokenizer.json",
+      "sha256": "929c5252409436dce1b38a75d1abbcb5e132d170d8e324e4e04ed915fa2d22df",
+      "size": 2128466,
+      "license": "MIT"
+    },
+    {
+      "path": "base.en/vocabulary.txt",
+      "url": "https://huggingface.co/Systran/faster-whisper-base.en/resolve/3d3d5dee26484f91867d81cb899cfcf72b96be6c/vocabulary.txt",
+      "sha256": "ff77588746d3a2595d32ab5b69ffd7b95ce2441ac57533cb66fc3eb575a115cf",
+      "size": 422309,
+      "license": "MIT"
+    },
+    {
+      "path": "base.en/README.md",
+      "url": "https://huggingface.co/Systran/faster-whisper-base.en/resolve/3d3d5dee26484f91867d81cb899cfcf72b96be6c/README.md",
+      "sha256": "0360e1518671daf4064d44121ad1c4bbb0446dd5b0f8c724c8d3132fd33a1540",
+      "size": 1323,
+      "license": "MIT"
+    },
+    {
+      "path": "licenses/Apache-2.0.txt",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "size": 11358,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "licenses/Whisper-MIT.txt",
+      "url": "https://raw.githubusercontent.com/openai/whisper/v20250625/LICENSE",
+      "sha256": "b5d65a59060e68c4ff940e1eddfa6f94b2d68fdf58ed7f4dd57721c997e35e9d",
+      "size": 1063,
+      "license": "MIT"
+    },
+    {
+      "path": "licenses/Silero-MIT.txt",
+      "url": "https://raw.githubusercontent.com/snakers4/silero-vad/v6.0/LICENSE",
+      "sha256": "2e63e9a38b6e8fc0c7bc37ce174caca1862870856c6daf5697cfb785e925520b",
+      "size": 1075,
+      "license": "MIT"
+    },
+    {
+      "path": "tiny.en/model.bin",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny.en/resolve/0d3d19a32d3338f10357c0889762bd8d64bbdeba/model.bin",
+      "sha256": "1a5afae06a4db91c975c9a9d78be5cc110ee4ea022ad57d55492e4550e936b2a",
+      "size": 75537502,
+      "license": "MIT"
+    },
+    {
+      "path": "tiny.en/config.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny.en/resolve/0d3d19a32d3338f10357c0889762bd8d64bbdeba/config.json",
+      "sha256": "14b1b421a90349bc551b881461426b561a874049cb9e4c4864f2ca384f6a7cc5",
+      "size": 2317,
+      "license": "MIT"
+    },
+    {
+      "path": "tiny.en/tokenizer.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny.en/resolve/0d3d19a32d3338f10357c0889762bd8d64bbdeba/tokenizer.json",
+      "sha256": "929c5252409436dce1b38a75d1abbcb5e132d170d8e324e4e04ed915fa2d22df",
+      "size": 2128466,
+      "license": "MIT"
+    },
+    {
+      "path": "tiny.en/vocabulary.txt",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny.en/resolve/0d3d19a32d3338f10357c0889762bd8d64bbdeba/vocabulary.txt",
+      "sha256": "ff77588746d3a2595d32ab5b69ffd7b95ce2441ac57533cb66fc3eb575a115cf",
+      "size": 422309,
+      "license": "MIT"
+    },
+    {
+      "path": "tiny.en/README.md",
+      "url": "https://huggingface.co/Systran/faster-whisper-tiny.en/resolve/0d3d19a32d3338f10357c0889762bd8d64bbdeba/README.md",
+      "sha256": "1b7816626bf0548e4b71a467f4112b4592924bc818e3117f19aefcc50ce4b6aa",
+      "size": 1323,
+      "license": "MIT"
+    }
+  ]
+}

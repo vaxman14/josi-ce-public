@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Josi CE admin model flow test</title></head><body>
+<div id="root"></div>
+<script type="module">
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import '../src/index.css';
+import { AdminModel } from '../src/pages/admin/Model.tsx';
+const chatgpt={kind:'openai_subscription',label:'ChatGPT subscription',external:true,baseUrlMode:'none',defaultBaseUrl:null,fields:[],discovery:'codex',modelNoun:'model',residency:'',docsUrl:''};
+const local={kind:'openai_compatible',label:'Local model server',external:false,baseUrlMode:'required',defaultBaseUrl:null,fields:[],discovery:'openai',modelNoun:'model',residency:'',docsUrl:''};
+let primary={provider:location.search.includes('claude')?'anthropic_subscription':'openai_subscription',model:'',active:true,probedAt:'2026-09-23',capabilities:{chat:true,structuredOutput:false,toolCalling:false,contextTokens:null},probeSteps:[]};
+window.calls=[];
+window.fetch=async (url, init={})=>{
+  const path=String(url), method=init.method||'GET';
+  window.calls.push({path,method,body:init.body?JSON.parse(init.body):null});
+  const json=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}});
+  if(path==='/api/admin/llm'&&method==='GET') return json({primary,fallback:null,localOnly:false,disabledFeatures:[],subscriptionOptions:[{id:'chatgpt',label:'ChatGPT',available:true,provider:'openai_subscription',reason:''}],edition:{edition:'ce',capabilities:['subscription_auth']},providerCatalog:[local,chatgpt]});
+  if(path==='/api/admin/llm/subscription/status') return json({cli:{installed:true,signedIn:true,detail:'Signed in.'}});
+  if(path==='/api/admin/llm/models'&&method==='POST') { const result={ok:true,unsupported:false,models:[
+    {id:'test-cli-one',label:'CLI One',recommended:true,likelyNonChat:false},
+    {id:'test-cli-two',label:'CLI Two',recommended:false,likelyNonChat:false},
+  ],message:'Candidates from Codex CLI.'};
+    if(location.search.includes('slowModels')) return new Promise(resolve=>{window.releaseModels=()=>resolve(json(result))});
+    return json(result);
+  }
+  if(path==='/api/admin/llm/providers/primary'&&method==='PUT') {
+    if(location.search.includes('slowSave')) await new Promise(resolve=>{window.releaseSave=resolve});
+    primary={...primary,provider:JSON.parse(init.body).provider,model:JSON.parse(init.body).model,active:false}; return json({ok:true});
+  }
+  if(path==='/api/admin/llm/providers/primary/probe'&&method==='POST') {
+    if(location.search.includes('slowProbe')) await new Promise(resolve=>{window.releaseProbe=resolve});
+    primary={...primary,active:!location.search.includes('probeFail')}; return json({provider:primary,result:{steps:[],fatal:primary.active?null:'Model did not pass a real request.'},disabledFeatures:[]});
+  }
+  throw Error('Unexpected request: '+method+' '+path);
+};
+createRoot(document.getElementById('root')).render(React.createElement(AdminModel));
+</script></body></html>

@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "releases": [
+    {
+      "image": "ghcr.io/vaxman14/josi-voice-box:0.1.0@sha256:dc5695386421ff02bb24b31132c1daa90569d740a4c5f5a422f491926e93c1fb",
+      "gpu": false
+    }
+  ]
+}

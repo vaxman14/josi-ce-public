@@ -1,0 +1,8 @@
+# Optional only. Mount the helper socket directory, never the Docker socket.
+# The host operator provisions the helper first; see docs/VOICE_BOX.md.
+services:
+  web:
+    environment:
+      JOSI_VOICE_HELPER_SOCKET: /run/josi-voice/helper.sock
+    volumes:
+      - ${JOSI_VOICE_SOCKET_DIR:?Set the host helper socket directory}:/run/josi-voice:ro

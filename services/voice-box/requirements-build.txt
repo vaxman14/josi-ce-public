@@ -1,0 +1,4 @@
+# Only docopt requires a pure-Python wheel build. Keep its build tools pinned.
+setuptools==84.0.0
+wheel==0.45.1
+pybind11==2.13.6

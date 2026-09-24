@@ -1,0 +1,35 @@
+name: Community question
+description: Ask a setup or usage question about the current Community Preview
+title: "[Question]: "
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Community help is best-effort and has no response-time guarantee. Never include credentials, private data, private hostnames, or unsanitized diagnostics.
+  - type: input
+    id: version
+    attributes:
+      label: Josi CE version or image digest
+      placeholder: 0.1.0 or sha256:…
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      placeholder: Ubuntu 24.04 amd64, Unraid 7 arm64, and so on
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Explain what you are trying to do and where you are stuck.
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+      description: Include sanitized commands, results, and documentation you followed.

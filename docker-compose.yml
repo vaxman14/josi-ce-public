@@ -1,0 +1,385 @@
+# Josi CE. Four services by default; two more only if the operator asks.
+#
+#   docker compose up -d                      web/API, worker, PostgreSQL, Caddy
+#   docker compose --profile ocr up -d        ...plus OCR
+#   docker compose --profile clamav up -d     ...plus ClamAV
+#   docker compose -f docker-compose.yml -f docker-compose.noproxy.yml up -d --scale caddy=0
+#                                             bring your own reverse proxy
+#
+# OCR and ClamAV are behind profiles rather than a config flag because a profile
+# that is not selected is not created at all: no container, no image pull, no
+# memory. On a Raspberry Pi that difference is the difference between usable and
+# not.
+
+name: josi-ce
+
+services:
+  # One-shot ownership repair also covers volumes created by older versions.
+  # Only this dedicated volume is mounted; no secrets, network or host paths.
+  attachment-init:
+    image: ${JOSI_IMAGE:-josi-ce}:${JOSI_TAG:-local}
+    user: "0:0"
+    command: ["node", "-e", "const f=require('node:fs');const p='/data/chat-attachments';const s=f.lstatSync(p);if(!s.isDirectory()||s.isSymbolicLink())throw Error('Unsafe attachment volume');f.chmodSync(p,0o700);f.chownSync(p,1000,1000)"]
+    restart: "no"
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN, FOWNER]
+    security_opt: ["no-new-privileges:true"]
+    volumes:
+      - josi_chat_attachments:/data/chat-attachments
+
+  # ------------------------------------------------------------------ database
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    # Publishes NO ports. The database is reachable only from the `data`
+    # network, which means only from the API and the worker.
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-josi}
+      POSTGRES_USER: ${POSTGRES_USER:-josi}
+      # Read from a file, not from this variable, so the password is not visible
+      # in `docker inspect` or the process environment.
+      POSTGRES_PASSWORD_FILE: /run/secrets/josi_db_password
+    secrets:
+      - josi_db_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - data
+    healthcheck:
+      # Bound to 127.0.0.1 inside the container so the probe cannot be answered
+      # by anything else on the network.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER:-josi} -d ${POSTGRES_DB:-josi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+
+  # ------------------------------------------------------------------ migrator
+  # Runs to completion, then exits. The API waits for it, so a container that
+  # starts against an unmigrated database is impossible rather than merely
+  # unlikely.
+  migrate:
+    build:
+      context: .
+    image: ${JOSI_IMAGE:-josi-ce}:${JOSI_TAG:-local}
+    command: ["node", "packages/db/migrate.mjs"]
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-josi}@db:5432/${POSTGRES_DB:-josi}
+      PGPASSWORD_FILE: /run/secrets/josi_db_password
+    secrets:
+      - josi_db_password
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # ------------------------------------------------------------------- web/API
+  web:
+    build:
+      context: .
+    image: ${JOSI_IMAGE:-josi-ce}:${JOSI_TAG:-local}
+    command: ["node", "apps/api/dist/server.js"]
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DATABASE_URL: postgresql://${POSTGRES_USER:-josi}@db:5432/${POSTGRES_DB:-josi}
+      PGPASSWORD_FILE: /run/secrets/josi_db_password
+      MASTER_KEY_FILE: /run/secrets/josi_master_key
+      APP_URL: ${JOSI_APP_URL:-http://localhost:8080}
+      APPLE_NATIVE_CLIENT_ID: ${APPLE_NATIVE_CLIENT_ID:-}
+      JOSI_INSTALLER_CONFIGURED: ${JOSI_INSTALLER_CONFIGURED:-}
+      JOSI_ACCESS_MODE: ${JOSI_ACCESS_MODE:-}
+      JOSI_SETUP_TOKEN_SHA256: ${JOSI_SETUP_TOKEN_SHA256:-}
+      # Set only by the installer alongside docker-compose.workspace.yml. The
+      # application still verifies that /workspace is a real mount point.
+      JOSI_WORKSPACE_ENABLED: ${JOSI_WORKSPACE_ENABLED:-0}
+      JOSI_WORKSPACE_MODE: ${JOSI_WORKSPACE_MODE:-ro}
+      JOSI_MAINTENANCE_HELPER_SOCKET: /run/josi-maintenance/helper.sock
+      # Empty means infer from APP_URL: secure for https, non-secure for LAN
+      # http. Explicit true/false remains available as an advanced override.
+      COOKIE_SECURE: ${JOSI_COOKIE_SECURE:-}
+      # Where the built web bundle lives inside the image. The API serves it
+      # from its own origin; unset, the API runs headless.
+      WEB_DIR: /app/web
+      CODEX_HOME: /data/codex
+      # Where the official Claude Code CLI keeps its login. Its own volume for
+      # the same reason: an update replaces the container and must not sign the
+      # operator out.
+      CLAUDE_CONFIG_DIR: /data/claude
+    secrets:
+      - josi_master_key
+      - josi_db_password
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      attachment-init:
+        condition: service_completed_successfully
+    networks:
+      - data
+      - edge
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    volumes:
+      # web-specific anchor for the attachments volume; see the shared list below.
+      - josi_chat_attachments:/data/chat-attachments
+      # Josi's OWN storage: recovery copies (M60/M62) live here, never in a
+      # user's mapped folder. A named volume so they survive the container being
+      # replaced, and so `docker compose down` does not silently destroy the
+      # only copy of a file somebody deleted.
+      - josi_versions:/data/versions
+      # Backups and diagnostics bundles. Named volumes so `docker compose down`
+      # does not take the only copy with it.
+      - josi_backups:/data/backups
+      - josi_diagnostics:/data/diagnostics
+      # The Codex CLI's home on the ChatGPT subscription path. Its own volume
+      # so replacing a container does not sign the operator out, and so
+      # removing it is a deliberate act separate from removing the database.
+      - josi_codex:/data/codex
+      - josi_claude:/data/claude
+      - ${JOSI_MAINTENANCE_SOCKET_DIR:-./maintenance-helper-socket}:/run/josi-maintenance:ro
+      # Shared folders (M45). Deny-by-default: nothing is mounted here unless an
+      # operator writes it, and mounting alone grants nothing — a root must also
+      # be registered before Josi will touch it.
+      #
+      # Mount READ-ONLY unless you intend Josi to write. The application has its
+      # own read-only flag per root, but `:ro` here is the one the kernel
+      # enforces.
+      #
+      #   - /srv/documents:/data/roots/documents:ro
+      #   - /srv/contracts:/data/roots/contracts:ro
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      # The only writable paths the process gets. Everything else, including its
+      # own code, is read-only.
+      - /tmp:size=64m,mode=1777
+
+  # -------------------------------------------------------------------- worker
+  worker:
+    build:
+      context: .
+    image: ${JOSI_IMAGE:-josi-ce}:${JOSI_TAG:-local}
+    command: ["node", "apps/worker/dist/main.js"]
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-josi}@db:5432/${POSTGRES_DB:-josi}
+      PGPASSWORD_FILE: /run/secrets/josi_db_password
+      MASTER_KEY_FILE: /run/secrets/josi_master_key
+      JOSI_WORKSPACE_ENABLED: ${JOSI_WORKSPACE_ENABLED:-0}
+      JOSI_WORKSPACE_MODE: ${JOSI_WORKSPACE_MODE:-ro}
+      CODEX_HOME: /data/codex
+      # Where the official Claude Code CLI keeps its login. Its own volume for
+      # the same reason: an update replaces the container and must not sign the
+      # operator out.
+      CLAUDE_CONFIG_DIR: /data/claude
+    secrets:
+      - josi_master_key
+      - josi_db_password
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      attachment-init:
+        condition: service_completed_successfully
+    # Not on `edge`: the worker has no business being reachable from the proxy.
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/worker-alive && find /tmp/worker-alive -mmin -2 | grep -q ."]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    volumes:
+      # worker-specific anchor for the attachments volume; see the shared list below.
+      - josi_chat_attachments:/data/chat-attachments
+      # Josi's OWN storage: recovery copies (M60/M62) live here, never in a
+      # user's mapped folder. A named volume so they survive the container being
+      # replaced, and so `docker compose down` does not silently destroy the
+      # only copy of a file somebody deleted.
+      - josi_versions:/data/versions
+      # Backups and diagnostics bundles. Named volumes so `docker compose down`
+      # does not take the only copy with it.
+      - josi_backups:/data/backups
+      - josi_diagnostics:/data/diagnostics
+      # The Codex CLI's home on the ChatGPT subscription path. Its own volume
+      # so replacing a container does not sign the operator out, and so
+      # removing it is a deliberate act separate from removing the database.
+      - josi_codex:/data/codex
+      - josi_claude:/data/claude
+      # Shared folders (M45). Deny-by-default: nothing is mounted here unless an
+      # operator writes it, and mounting alone grants nothing — a root must also
+      # be registered before Josi will touch it.
+      #
+      # Mount READ-ONLY unless you intend Josi to write. The application has its
+      # own read-only flag per root, but `:ro` here is the one the kernel
+      # enforces.
+      #
+      #   - /srv/documents:/data/roots/documents:ro
+      #   - /srv/contracts:/data/roots/contracts:ro
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+
+  # --------------------------------------------------------------------- Caddy
+  # Automatic HTTPS for a real domain.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    # NO `profiles:` here, deliberately.
+    #
+    # It previously carried profiles: ["", "default"] to allow a bring-your-own
+    # -proxy mode. That worked for `COMPOSE_PROFILES=noproxy`, but Compose
+    # treats the active profile set as a whole: naming ANY profile deactivates
+    # the empty one. So `docker compose --profile ocr up -d` — the exact command
+    # in the docs for enabling OCR — silently dropped Caddy and took HTTPS
+    # offline. Enabling a background worker must not remove the reverse proxy.
+    #
+    # Caddy now always starts. BYO-proxy operators use the override file:
+    #   docker compose -f docker-compose.yml -f docker-compose.noproxy.yml \
+    #     up -d --scale caddy=0
+    ports:
+      - "${JOSI_HTTP_PORT:-80}:80"
+      - "${JOSI_HTTPS_PORT:-443}:443"
+    environment:
+      # Caddy's `{$VAR:default}` falls back only when the variable is UNSET, not
+      # when it is empty — an empty one substitutes an empty string and the site
+      # block becomes `{ … }`, which Caddy rejects outright ("server block
+      # without any key"). So this must never be empty. It is assembled rather
+      # than defaulted for exactly that reason:
+      #   no domain  ->  ""       + ":80"        = ":80"          (HTTP, no ACME)
+      #   a domain   ->  "https://" + "domain"   = "https://domain" (ACME on)
+      JOSI_SITE_ADDRESS: ${JOSI_DOMAIN:+https://}${JOSI_DOMAIN:-:80}
+      JOSI_DOMAIN: ${JOSI_DOMAIN:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    # Only `edge`. Caddy cannot reach the database at all, which is the point of
+    # splitting the networks.
+    networks:
+      - edge
+    depends_on:
+      - web
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Caddy is the one service that keeps a capability: binding 80/443 as a
+    # non-root process requires it. It gets exactly that one and nothing else.
+    cap_add:
+      - NET_BIND_SERVICE
+
+  # ------------------------------------------------------- optional: OCR
+  # Disabled by default. `--profile ocr` is what brings this into existence;
+  # without it Compose does not create the container, pull the image, or
+  # allocate a byte.
+  ocr:
+    image: ${JOSI_OCR_IMAGE:-josi-ce-ocr}:${JOSI_TAG:-local}
+    build:
+      context: ./services/ocr
+    profiles: ["ocr"]
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-josi}@db:5432/${POSTGRES_DB:-josi}
+      PGPASSWORD_FILE: /run/secrets/josi_db_password
+    secrets:
+      - josi_db_password
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - data
+    # OCR is the service most likely to eat a small machine alive, so it is
+    # capped by default and the super admin tunes it from there.
+    deploy:
+      resources:
+        limits:
+          cpus: "${JOSI_OCR_CPUS:-1.0}"
+          memory: ${JOSI_OCR_MEMORY:-512m}
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # ---------------------------------------------------- optional: ClamAV
+  clamav:
+    image: clamav/clamav:stable
+    profiles: ["clamav"]
+    restart: unless-stopped
+    volumes:
+      - clamav_data:/var/lib/clamav
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD-SHELL", "clamdcheck.sh || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      # Signature load takes minutes on first run and on slow hardware.
+      start_period: 300s
+    deploy:
+      resources:
+        limits:
+          memory: ${JOSI_CLAMAV_MEMORY:-1500m}
+    security_opt:
+      - no-new-privileges:true
+
+secrets:
+  # Generated by scripts/install.sh with mode 0600. Never an environment
+  # variable, never in an image layer, never committed — `secrets/` is
+  # gitignored and the pre-commit scanner rejects key material besides.
+  josi_master_key:
+    file: ./secrets/master.key
+  josi_db_password:
+    file: ./secrets/db_password
+
+volumes:
+  db_data:
+  josi_versions:
+  josi_backups:
+  josi_diagnostics:
+  josi_codex:
+  josi_claude:
+  josi_chat_attachments:
+  caddy_data:
+  caddy_config:
+  clamav_data:
+
+networks:
+  # Caddy <-> web only.
+  edge:
+  # web, worker, migrate <-> db. The database is on this and nothing else.
+  data:

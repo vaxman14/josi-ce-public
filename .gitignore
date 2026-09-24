@@ -1,0 +1,34 @@
+# Secrets — never commit. CE ships example files only.
+.env
+.env.*
+!.env.example
+secrets/
+*.key
+*.pem
+*-tokens.json
+serviceAccount*.json
+credentials/
+master.key
+
+# Build + deps
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+coverage/
+__pycache__/
+*.pyc
+
+# Runtime state that must never enter git
+data/
+uploads/
+backups/
+diagnostics/
+caddy_data/
+caddy_config/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

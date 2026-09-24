@@ -1,0 +1,7 @@
+{
+  "name": "@josi-ce/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js"
+}

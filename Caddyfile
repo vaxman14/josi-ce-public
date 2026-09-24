@@ -1,0 +1,58 @@
+# Josi CE reverse proxy.
+#
+# With a real domain in JOSI_DOMAIN, Caddy obtains and renews a certificate
+# automatically. With no domain it serves plain HTTP on :80.
+#
+# THE SITE ADDRESS CARRIES THE SCHEME, and that is load-bearing. This block used
+# to be `{$JOSI_DOMAIN}` defaulting to `localhost`, and the comment here claimed
+# that served plain HTTP. It did not: a bare hostname turns on Caddy's automatic
+# HTTPS, so Caddy issued itself a local certificate for `localhost` and answered
+# every plain-HTTP request with `308 Permanent Redirect` to
+# `https://127.0.0.1/…` — dropping the mapped port, so following the redirect
+# landed nowhere either.
+#
+# That broke the documented LAN/evaluation path in INSTALLATION.md §0.4 and
+# §2.3 completely, and no static test could see it. The first clean-install
+# acceptance run to actually boot the stack failed 36 of 55 checks on it.
+#
+# `:80` means "this port, HTTP, no automatic HTTPS". A scheme-qualified
+# `https://host` means the opposite, deliberately.
+#
+# Operators terminating TLS elsewhere use the override file instead:
+#   docker compose -f docker-compose.yml -f docker-compose.noproxy.yml \
+#     up -d --scale caddy=0
+
+{
+	admin 127.0.0.1:2019
+
+	# NO `email {$JOSI_ACME_EMAIL}` HERE, deliberately.
+	#
+	# Caddy substitutes an unset variable with nothing, so that line becomes a
+	# bare `email` — which is a parse error, and the container then restart-loops
+	# on every install that did not set the variable. That is the default case.
+	# Found by actually booting the stack; it is invisible to static review.
+	#
+	# ACME issuance works without a contact address. An operator who wants
+	# expiry notices uncomments this and fills it in:
+	#
+	#   email you@example.com
+}
+
+{$JOSI_SITE_ADDRESS::80} {
+	encode zstd gzip
+
+	# Josi is a private workspace tool; there is nothing here for a crawler.
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Robots-Tag "noindex, nofollow"
+	}
+
+	# Health and readiness stay reachable so an external monitor can see them.
+	reverse_proxy web:8080 {
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+}

@@ -1,0 +1,23 @@
+{
+  "image": "sha256:32c268496f7c966ab64f0b647856ed35eee6843b0bc98617b23d7f8edab56001",
+  "project": "josi-voice-1e829ff76615",
+  "checks": [
+    "install verifies API, STT, VAD and Kokoro model readiness",
+    "actual container has no network or published ports, no Docker socket, and runs non-root with a read-only root",
+    "private gateway refuses requests without installation credential",
+    "real PCM frames produce VAD start, incremental transcription and final text",
+    "voice change loads and previews Bella only after verification",
+    "rollback restores previous healthy voice configuration",
+    "Kokoro speed adjustment loads and produces valid PCM WAV audio",
+    "rollback restores the previous healthy speech speed",
+    "Whisper Tiny loads and passes inference readiness as a lower-cost CPU option",
+    "restart preserves configuration and verifies models again",
+    "uninstall stops only the dedicated project and preserves recovery configuration"
+  ],
+  "installSeconds": 8.5,
+  "synthesisSeconds": 2.92,
+  "transcription": "Hello, please remember to buy apples tomorrow.",
+  "frameProcessingSeconds": 5.831,
+  "streamAudioSeconds": 6.175,
+  "maxSimulatedBacklogSeconds": 2.791
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Josi CE model picker smoke</title></head><body>
+<div id="root"></div>
+<script type="module">
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { ProviderForm } from '../src/components/ProviderForm.tsx';
+window.modelListRequests = 0;
+window.fetch = async (url) => {
+  if (String(url) === '/api/admin/llm/models') {
+    window.modelListRequests++;
+    return new Response(JSON.stringify({ok:true, unsupported:false, models:[
+      {id:'test-cli-one',label:'CLI One',recommended:true,likelyNonChat:false},
+      {id:'test-cli-two',label:'CLI Two',recommended:false,likelyNonChat:false},
+    ], message:'Candidates from Codex CLI.'}), {status:200,headers:{'content-type':'application/json'}});
+  }
+  throw new Error('Unexpected request: '+String(url));
+};
+createRoot(document.getElementById('root')).render(React.createElement(ProviderForm, {
+  busy:false,
+  initialProvider:'openai_subscription',
+  catalog:[{kind:'openai_subscription',label:'ChatGPT subscription',external:true,baseUrlMode:'none',defaultBaseUrl:null,fields:[],discovery:'codex',modelNoun:'model',residency:'',docsUrl:''}],
+  paths:{models:'/admin/llm/models',codexBase:'/admin/llm/subscription',claudeBase:'/admin/llm/subscription/claude'},
+  loadSubscriptionInfo:async () => ({options:[],cli:{installed:true,signedIn:true,detail:'Signed in.'}}),
+  onSubmit:async () => undefined,
+}));
+</script></body></html>

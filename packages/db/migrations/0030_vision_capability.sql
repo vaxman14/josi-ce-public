@@ -1,0 +1,11 @@
+-- Josi CE 0030: a model's ability to see an image, observed the same way every
+-- other capability in 0003 is: null until a probe actually ran one through it,
+-- and null is treated as off, not as "probably fine".
+--
+-- Chat attachments used to run OCR on every image and hand the (often
+-- unrelated) recognized text to the model as if it were a description of the
+-- photo. That is worse than no description: a portrait photo produced garbled
+-- text that read as a hallucination. This column is what lets the chat route
+-- decide, per configured model, whether to send the picture itself or say
+-- plainly that this model cannot see images.
+alter table llm_providers add column cap_vision boolean;

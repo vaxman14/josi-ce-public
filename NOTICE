@@ -1,0 +1,48 @@
+Josi CE — Community Edition
+Copyright (C) 2026 SOCAL RECEPTIONIST LLC
+
+Josi and Josi CE are created and published by SOCAL RECEPTIONIST LLC.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version. See LICENSE for the full text.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+--------------------------------------------------------------------------------
+TRADEMARKS AND BRANDING
+
+The AGPL covers the code. It does not cover the Josi name, the Josi mark (the
+white J on navy), the Josi wordmark, or the Josi product identity, which remain
+the property of SOCAL RECEPTIONIST LLC.
+
+Copyright and trademark are different rights and this distribution keeps them
+apart. The AGPL grants you the right to modify and redistribute this software,
+and that includes its branding assets; nothing here restricts that. What the
+trademark covers is narrower: do not use the Josi name or marks in a way that
+tells people a modified version came from us.
+
+Redistributing Josi CE unmodified, with its branding intact, needs no
+permission. A modified version should carry your identity rather than ours.
+
+See TRADEMARK.md for the full policy.
+
+--------------------------------------------------------------------------------
+SUPPORT
+
+Josi CE carries no support entitlement, no guaranteed response time and no SLA.
+You may email SOCAL RECEPTIONIST LLC, but nothing obliges a reply.
+
+--------------------------------------------------------------------------------
+THIRD-PARTY SERVICES
+
+Josi CE integrates with services operated by third parties, including Google,
+Microsoft, OpenAI, Anthropic, xAI and Twilio. It is not affiliated with,
+endorsed by or sponsored by any of them. Their names and marks belong to their
+respective owners.
+
+Self-hosters supply their own credentials for every such service. No credentials
+belonging to SOCAL RECEPTIONIST LLC are included in this distribution.

@@ -1,0 +1,55 @@
+{
+  "name": "josi-ce",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Josi CE — self-hosted Community Edition. Created and published by SOCAL RECEPTIONIST LLC.",
+  "license": "AGPL-3.0-or-later",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run",
+    "scan": "bash scripts/scan-secrets.sh",
+    "migrate": "node packages/db/migrate.mjs",
+    "e2e": "node scripts/e2e-web.mjs",
+    "test:mcp-workspace": "node scripts/test-workspace-mcp-child.mjs",
+    "test:cli": "bash scripts/test-josi-cli.sh && bash scripts/test-cli-installer.sh && bash scripts/test-cli-installer-debian.sh",
+    "typecheck": "tsc -b && tsc --noEmit -p apps/web/tsconfig.json"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.16",
+    "@types/express": "^5.0.0",
+    "@types/heic-convert": "^2.1.1",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^22.20.1",
+    "@types/nodemailer": "^8.0.1",
+    "@types/qrcode": "^1.5.6",
+    "playwright": "1.62.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.0",
+    "yaml": "^2.9.0"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.0.2",
+    "@tesseract.js-data/eng": "^1.0.0",
+    "ajv": "^8.20.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "fflate": "^0.8.3",
+    "heic-convert": "^2.1.0",
+    "mammoth": "^1.12.2",
+    "multer": "^2.3.0",
+    "nodemailer": "^9.1.1",
+    "otplib": "^13.5.0",
+    "pdf-parse": "^2.4.5",
+    "postgres": "^3.4.9",
+    "qrcode": "^1.5.4",
+    "tesseract.js": "^7.0.0",
+    "undici": "^7.29.1"
+  },
+  "overrides": {
+    "uuid": "11.1.1"
+  }
+}

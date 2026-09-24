@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Josi CE is derived from a private commercial codebase. Nothing from that
+# product's production surface may reach this repository.
+exec "$(git rev-parse --show-toplevel)/scripts/scan-secrets.sh"

@@ -1,0 +1,18 @@
+{
+  "architecture": "arm64",
+  "imageManifest": "sha256:e765fc340cda0941c4cdc6b98edd4d4e5455e96e43879ba35fa337dbf4599fa2",
+  "imageConfig": "sha256:c24f9776621dcd21b60967150def101a3eeebb599fda847c80bc679247d2b2ea",
+  "ociArchiveSha256": "038a77a2a8e3cfd0a78c60b434c857264f11cebb4b87730e55aa9f724bcab512",
+  "sbom": "arm64.spdx.json.gz",
+  "sbomSha256": "390d94ed8275d21b6c94db2042a4930d1bb31b6c65974ec8282016a222d57bfb",
+  "syftVersion": "{\n \"application\": \"syft\",\n \"buildDate\": \"2026-08-27T16:55:02Z\",\n \"compiler\": \"gc\",\n \"gitCommit\": \"91a0032987d91b7411b52f6f5c185c5e7f775495\",\n \"gitDescription\": \"v1.51.1\",\n \"goVersion\": \"go1.26.3\",\n \"platform\": \"linux/amd64\",\n \"schemaVersion\": \"16.1.10\",\n \"version\": \"1.51.1\"\n}\n",
+  "packages": 211,
+  "sourceFiles": 793,
+  "sourceBytes": 449127313,
+  "codecLibraries": [],
+  "allImageLayersChecked": true,
+  "spdxSchemaValidated": true,
+  "spdxSchemaSha256": "239208b7ac287b3cf5d9a9af23f9d69863971102a5e1587a27a398b43490b89b",
+  "sourceLockSha256": "14b202370ac211badcdf599e383fca3e797fb08ebc0a8377874b49413299339d",
+  "spdxJsonSha256": "065fcd140ca835c9302267202d46299c3c45a21ea14eea854d76ae0feb2637f6"
+}

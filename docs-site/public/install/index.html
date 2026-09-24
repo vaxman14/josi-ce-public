@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#07101f">
+  <title>Installation and operations | Josi CE</title>
+  <meta name="description" content="Josi CE installation choices, configuration, operations, and troubleshooting.">
+  <link rel="canonical" href="https://help.heyjosi.com/install/">
+  <style>
+    :root{--bg:#07101f;--panel:#0d192b;--panel2:#111f34;--text:#eef4fb;--muted:#9badc3;--line:#26374f;--orange:#f58220;--gold:#f5ad42;--code:#050b15;--max:860px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.68 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--gold);text-decoration-thickness:1px;text-underline-offset:3px}a:hover{color:#ffc46b}.top{position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(7,16,31,.92);backdrop-filter:blur(16px)}.top-inner{max-width:1180px;margin:auto;height:68px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none;font-weight:750;letter-spacing:-.02em}.brand img{width:38px;height:38px;object-fit:contain}.brand span small{display:block;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}.top-links{display:flex;gap:16px;align-items:center;font-size:14px}.pill{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 15px;border-radius:999px;background:var(--orange);color:#111827!important;font-weight:800;text-decoration:none}.layout{max-width:1180px;margin:auto;display:grid;grid-template-columns:250px minmax(0,var(--max));gap:54px;padding:48px 24px 96px}.side{position:sticky;top:96px;align-self:start;max-height:calc(100vh - 120px);overflow:auto;padding-right:16px}.side strong{display:block;margin-bottom:12px;color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.09em}.side a{display:block;padding:5px 0;color:var(--muted);font-size:13px;text-decoration:none}.side a:hover{color:var(--orange)}main{min-width:0}.hero{padding:42px 0 36px;border-bottom:1px solid var(--line);margin-bottom:42px}.eyebrow{color:var(--orange);font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.hero h1{margin:8px 0 14px;font-size:clamp(42px,8vw,72px);line-height:.98;letter-spacing:-.055em}.hero p{max-width:680px;color:var(--muted);font-size:19px}.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.meta span{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:#bfd0e3;font-size:12px}article h1{display:none}article h2{margin:64px 0 18px;padding-top:20px;border-top:1px solid var(--line);font-size:30px;line-height:1.2;letter-spacing:-.025em;scroll-margin-top:92px}article h3{margin:38px 0 12px;font-size:21px;line-height:1.3;scroll-margin-top:92px}article p,article li{color:#d5dfeb}article strong{color:#fff}article blockquote{margin:24px 0;padding:18px 22px;border-left:4px solid var(--orange);border-radius:0 12px 12px 0;background:var(--panel);color:#dbe6f3}article blockquote p{margin:0}article ul,article ol{padding-left:24px}article li+li{margin-top:6px}pre{overflow:auto;margin:18px 0 26px;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:var(--code);box-shadow:0 14px 34px rgba(0,0,0,.16)}code{font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#ffd393}p code,li code,td code{padding:2px 5px;border-radius:5px;background:var(--panel2)}table{display:block;overflow-x:auto;width:100%;border-collapse:collapse;margin:22px 0}th,td{padding:11px 13px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--panel2);color:#fff}td{color:#cad7e6}.copy{float:right;border:1px solid var(--line);border-radius:7px;background:var(--panel2);color:var(--muted);padding:5px 8px;font-size:11px;cursor:pointer}.copy:hover{color:#fff}.footer{max-width:var(--max);margin:0 auto;padding:30px 24px 60px;color:var(--muted);border-top:1px solid var(--line);font-size:13px}@media(max-width:900px){.layout{display:block;padding-top:24px}.side{display:none}.top-links a:not(.pill){display:none}.hero{padding-top:26px}article h2{font-size:26px}}@media(max-width:520px){.top-inner{padding:0 16px}.layout{padding-left:16px;padding-right:16px}.brand span small{display:none}.pill{padding:0 12px}.hero h1{font-size:44px}pre{margin-left:-4px;margin-right:-4px;padding:15px}}
+  </style>
+  <style>
+    .topic-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:0 0 40px}
+    .topic-index a{display:block;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-weight:750;text-decoration:none}
+    .topic-index a span{display:block;margin-top:6px;color:var(--muted);font-size:14px;font-weight:400}
+    .side a.level-3{padding-left:14px;font-size:12px}
+    .mobile-index{display:none;margin-bottom:30px;padding:14px 18px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+    .mobile-index summary{cursor:pointer;font-weight:700;color:var(--gold)}
+    .mobile-index nav{display:grid;gap:9px;max-height:55vh;overflow:auto;padding-top:15px}
+    .mobile-index a{text-decoration:none;font-size:14px}
+    .mobile-index a.level-3{padding-left:14px;font-size:13px;color:var(--muted)}
+    @media(max-width:900px){.mobile-index{display:block}}
+    .help-chat{position:fixed;right:20px;bottom:18px;z-index:50}
+    .help-chat-toggle{border:0;border-radius:999px;padding:13px 18px;background:var(--orange);color:#101827;font:700 15px system-ui;box-shadow:0 8px 28px #0008;cursor:pointer}
+    .help-chat-panel{width:min(380px,calc(100vw - 24px));height:min(560px,calc(100vh - 100px));margin-bottom:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:0 16px 45px #0009;overflow:hidden;display:flex;flex-direction:column}
+    .help-chat-panel[hidden]{display:none}
+    .help-chat-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#15253a;font-weight:750}
+    .help-chat-head button{border:0;background:transparent;color:white;font-size:22px;cursor:pointer}
+    .help-chat-log{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+    .help-chat-msg{max-width:92%;padding:10px 12px;border-radius:12px;background:#20314a;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.5}
+    .help-chat-msg.visitor{align-self:flex-end;background:#5b3819}
+    .help-chat-msg a{display:block;margin-top:7px;font-size:12px}
+    .help-chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+    .help-chat-form input{flex:1;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;font-size:14px}
+    .help-chat-form button{border:0;border-radius:8px;padding:0 12px;background:var(--orange);color:#101827;font-weight:700;cursor:pointer}
+    .help-chat-form button:disabled{opacity:.5;cursor:wait}
+    .help-chat-disclosure{margin:0;padding:0 12px 12px;color:var(--muted);font-size:11px;line-height:1.4}
+    @media(max-width:520px){.help-chat{right:12px;bottom:12px}.help-chat-panel{height:min(580px,calc(100vh - 80px))}}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="top-inner">
+    <a class="brand" href="../"><img src="../brand/josi-mark.png" alt=""><span>Josi CE<small>Community Preview</small></span></a>
+    <nav class="top-links"><a href="../#help">Help</a><a href="../install/#installation">Installation guide</a><a href="../install/#configuration">Configuration options</a><a href="../legal/#terms-of-use">Terms</a><a href="../legal/#privacy-notice">Privacy</a><a class="pill" href="../install/#installation">Start installing</a></nav>
+  </div></header>
+  <div class="layout" id="top">
+    <aside class="side"><strong>On this page</strong><a class="level-2" href="#installation">1. What the standard installation creates</a>
+<a class="level-2" href="#supported-deployment-shapes">2. Supported deployment shapes</a>
+<a class="level-3" href="#public-https-with-bundled-caddy">2.1 Public HTTPS with bundled Caddy</a>
+<a class="level-3" href="#existing-reverse-proxy">2.2 Existing reverse proxy</a>
+<a class="level-3" href="#local-http-evaluation">2.3 Local HTTP evaluation</a>
+<a class="level-2" href="#host-requirements">3. Host requirements</a>
+<a class="level-3" href="#operating-system-and-architecture">3.1 Operating system and architecture</a>
+<a class="level-3" href="#required-software">3.2 Required software</a>
+<a class="level-3" href="#docker-access">3.3 Docker access</a>
+<a class="level-3" href="#network-requirements">3.4 Network requirements</a>
+<a class="level-2" href="#obtain-the-source">4. Obtain the source</a>
+<a class="level-2" href="#read-the-configuration-before-starting">5. Read the configuration before starting</a>
+<a class="level-2" href="#configuration">6. Configure .env</a>
+<a class="level-3" href="#domain-and-application-url">6.1 Domain and application URL</a>
+<a class="level-3" href="#host-ports">6.2 Host ports</a>
+<a class="level-3" href="#database-names">6.3 Database names</a>
+<a class="level-3" href="#application-image">6.4 Application image</a>
+<a class="level-3" href="#optional-service-limits">6.5 Optional-service limits</a>
+<a class="level-2" href="#generate-installation-secrets">7. Generate installation secrets</a>
+<a class="level-3" href="#master-key-warning">7.1 Master-key warning</a>
+<a class="level-2" href="#build-and-start-the-default-stack">8. Build and start the default stack</a>
+<a class="level-2" href="#verify-the-installation">9. Verify the installation</a>
+<a class="level-3" href="#container-health">9.1 Container health</a>
+<a class="level-3" href="#liveness">9.2 Liveness</a>
+<a class="level-3" href="#readiness">9.3 Readiness</a>
+<a class="level-3" href="#tls-and-redirects">9.4 TLS and redirects</a>
+<a class="level-3" href="#optional-services-remain-absent">9.5 Optional services remain absent</a>
+<a class="level-2" href="#complete-the-setup-wizard">10. Complete the setup wizard</a>
+<a class="level-2" href="#enable-optional-ocr-and-clamav-profiles">11. Enable optional OCR and ClamAV profiles</a>
+<a class="level-2" href="#use-an-existing-reverse-proxy">12. Use an existing reverse proxy</a>
+<a class="level-2" href="#firewall-guidance">13. Firewall guidance</a>
+<a class="level-2" href="#normal-operations">14. Normal operations</a>
+<a class="level-3" href="#commands-that-are-intentionally-not-routine">14.1 Commands that are intentionally not routine</a>
+<a class="level-2" href="#backup-and-restore">15. Backup and restore</a>
+<a class="level-2" href="#upgrade-and-rollback">16. Upgrade and rollback</a>
+<a class="level-2" href="#troubleshooting">17. Troubleshooting</a>
+<a class="level-3" href="#compose-cannot-read-a-secret-file">17.1 Compose cannot read a secret file</a>
+<a class="level-3" href="#database-is-unhealthy">17.2 Database is unhealthy</a>
+<a class="level-3" href="#migrator-exited-nonzero">17.3 Migrator exited nonzero</a>
+<a class="level-3" href="#web-is-running-but-ready-fails">17.4 Web is running but /ready fails</a>
+<a class="level-3" href="#login-works-locally-but-fails-through-a-proxy">17.5 Login works locally but fails through a proxy</a>
+<a class="level-3" href="#caddy-restarts-or-cannot-issue-a-certificate">17.6 Caddy restarts or cannot issue a certificate</a>
+<a class="level-3" href="#port-already-in-use">17.7 Port already in use</a>
+<a class="level-3" href="#gmail-rejects-the-smtp-username-or-password">17.7.1 Gmail rejects the SMTP username or password</a>
+<a class="level-3" href="#docker-build-fails">17.8 Docker build fails</a>
+<a class="level-3" href="#host-is-out-of-disk-space">17.9 Host is out of disk space</a>
+<a class="level-3" href="#host-architecture-mismatch">17.10 Host architecture mismatch</a>
+<a class="level-3" href="#clamav-remains-unhealthy">17.11 ClamAV remains unhealthy</a>
+<a class="level-3" href="#managing-connector-permissions">Managing connector permissions</a>
+<a class="level-2" href="#security-checklist">18. Security checklist</a>
+<a class="level-2" href="#collecting-useful-support-information">19. Collecting useful support information</a>
+<a class="level-2" href="#offline-password-recovery">Offline password recovery</a>
+<a class="level-2" href="#developer-workspace">Optional developer workspace</a>
+<a class="level-2" href="#setup-recovery-key">Setup recovery key and model test</a>
+<a class="level-2" href="#uninstallation">20. Uninstallation</a></aside>
+    <main>
+      <section class="hero"><div class="eyebrow">Official Josi CE documentation</div><h1>Installation and operations</h1><p>The complete operator guide, indexed by chapter.</p><div class="meta"><span>Community Preview</span><span>Docker Compose</span><span>AMD64 + ARM64</span><span>Self-hosted</span></div></section>
+      <details class="mobile-index"><summary>On this page</summary><nav aria-label="Page sections"><a class="level-2" href="#installation">1. What the standard installation creates</a>
+<a class="level-2" href="#supported-deployment-shapes">2. Supported deployment shapes</a>
+<a class="level-3" href="#public-https-with-bundled-caddy">2.1 Public HTTPS with bundled Caddy</a>
+<a class="level-3" href="#existing-reverse-proxy">2.2 Existing reverse proxy</a>
+<a class="level-3" href="#local-http-evaluation">2.3 Local HTTP evaluation</a>
+<a class="level-2" href="#host-requirements">3. Host requirements</a>
+<a class="level-3" href="#operating-system-and-architecture">3.1 Operating system and architecture</a>
+<a class="level-3" href="#required-software">3.2 Required software</a>
+<a class="level-3" href="#docker-access">3.3 Docker access</a>
+<a class="level-3" href="#network-requirements">3.4 Network requirements</a>
+<a class="level-2" href="#obtain-the-source">4. Obtain the source</a>
+<a class="level-2" href="#read-the-configuration-before-starting">5. Read the configuration before starting</a>
+<a class="level-2" href="#configuration">6. Configure .env</a>
+<a class="level-3" href="#domain-and-application-url">6.1 Domain and application URL</a>
+<a class="level-3" href="#host-ports">6.2 Host ports</a>
+<a class="level-3" href="#database-names">6.3 Database names</a>
+<a class="level-3" href="#application-image">6.4 Application image</a>
+<a class="level-3" href="#optional-service-limits">6.5 Optional-service limits</a>
+<a class="level-2" href="#generate-installation-secrets">7. Generate installation secrets</a>
+<a class="level-3" href="#master-key-warning">7.1 Master-key warning</a>
+<a class="level-2" href="#build-and-start-the-default-stack">8. Build and start the default stack</a>
+<a class="level-2" href="#verify-the-installation">9. Verify the installation</a>
+<a class="level-3" href="#container-health">9.1 Container health</a>
+<a class="level-3" href="#liveness">9.2 Liveness</a>
+<a class="level-3" href="#readiness">9.3 Readiness</a>
+<a class="level-3" href="#tls-and-redirects">9.4 TLS and redirects</a>
+<a class="level-3" href="#optional-services-remain-absent">9.5 Optional services remain absent</a>
+<a class="level-2" href="#complete-the-setup-wizard">10. Complete the setup wizard</a>
+<a class="level-2" href="#enable-optional-ocr-and-clamav-profiles">11. Enable optional OCR and ClamAV profiles</a>
+<a class="level-2" href="#use-an-existing-reverse-proxy">12. Use an existing reverse proxy</a>
+<a class="level-2" href="#firewall-guidance">13. Firewall guidance</a>
+<a class="level-2" href="#normal-operations">14. Normal operations</a>
+<a class="level-3" href="#commands-that-are-intentionally-not-routine">14.1 Commands that are intentionally not routine</a>
+<a class="level-2" href="#backup-and-restore">15. Backup and restore</a>
+<a class="level-2" href="#upgrade-and-rollback">16. Upgrade and rollback</a>
+<a class="level-2" href="#troubleshooting">17. Troubleshooting</a>
+<a class="level-3" href="#compose-cannot-read-a-secret-file">17.1 Compose cannot read a secret file</a>
+<a class="level-3" href="#database-is-unhealthy">17.2 Database is unhealthy</a>
+<a class="level-3" href="#migrator-exited-nonzero">17.3 Migrator exited nonzero</a>
+<a class="level-3" href="#web-is-running-but-ready-fails">17.4 Web is running but /ready fails</a>
+<a class="level-3" href="#login-works-locally-but-fails-through-a-proxy">17.5 Login works locally but fails through a proxy</a>
+<a class="level-3" href="#caddy-restarts-or-cannot-issue-a-certificate">17.6 Caddy restarts or cannot issue a certificate</a>
+<a class="level-3" href="#port-already-in-use">17.7 Port already in use</a>
+<a class="level-3" href="#gmail-rejects-the-smtp-username-or-password">17.7.1 Gmail rejects the SMTP username or password</a>
+<a class="level-3" href="#docker-build-fails">17.8 Docker build fails</a>
+<a class="level-3" href="#host-is-out-of-disk-space">17.9 Host is out of disk space</a>
+<a class="level-3" href="#host-architecture-mismatch">17.10 Host architecture mismatch</a>
+<a class="level-3" href="#clamav-remains-unhealthy">17.11 ClamAV remains unhealthy</a>
+<a class="level-3" href="#managing-connector-permissions">Managing connector permissions</a>
+<a class="level-2" href="#security-checklist">18. Security checklist</a>
+<a class="level-2" href="#collecting-useful-support-information">19. Collecting useful support information</a>
+<a class="level-2" href="#offline-password-recovery">Offline password recovery</a>
+<a class="level-2" href="#developer-workspace">Optional developer workspace</a>
+<a class="level-2" href="#setup-recovery-key">Setup recovery key and model test</a>
+<a class="level-2" href="#uninstallation">20. Uninstallation</a></nav></details>
+      <article><h1>Josi CE installation and operations manual</h1>
+<p>This manual describes how to install the Josi CE Community Preview from this
+repository. It is intentionally explicit. Commands are written for a Linux
+server unless a section says otherwise.</p>
+<blockquote>
+<p><strong>Community Preview warning</strong></p>
+<p>Josi CE 0.1 is beta-quality software. Features may be incomplete, unavailable,
+delayed, inaccurate or changed without notice. Do not use Josi as the sole
+system for emergencies, safety, healthcare, legal, financial, compliance,
+access control or backups. Review AI output and consequential actions yourself.</p>
+</blockquote>
+<h2 id="installation">1. What the standard installation creates</h2>
+<p>The default Compose deployment creates five service roles:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Purpose</th>
+<th>Host exposure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>db</code></td>
+<td>PostgreSQL 16 database</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>migrate</code></td>
+<td>Applies database migrations, then exits</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>API and browser application</td>
+<td>Through Caddy only</td>
+</tr>
+<tr>
+<td><code>worker</code></td>
+<td>Background jobs</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>caddy</code></td>
+<td>HTTP/HTTPS reverse proxy and certificate renewal</td>
+<td>Ports 80 and 443</td>
+</tr>
+</tbody></table>
+<p>Two optional services are disabled unless explicitly selected:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Compose profile</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ocr</code></td>
+<td><code>ocr</code></td>
+<td>Optical character recognition</td>
+</tr>
+<tr>
+<td><code>clamav</code></td>
+<td><code>clamav</code></td>
+<td>Malware scanning</td>
+</tr>
+</tbody></table>
+<p>The database is attached only to the private <code>data</code> network. Caddy is attached
+only to the <code>edge</code> network. The worker is not reachable through the proxy.</p>
+<h2 id="supported-deployment-shapes">2. Supported deployment shapes</h2>
+<p>Choose one deployment shape before changing configuration.</p>
+<h3 id="public-https-with-bundled-caddy">2.1 Public HTTPS with bundled Caddy</h3>
+<p>Use this for the usual single-server installation. You need a public DNS name,
+inbound TCP ports 80 and 443, and no other process already using those ports.
+Caddy obtains and renews the TLS certificate.</p>
+<h3 id="existing-reverse-proxy">2.2 Existing reverse proxy</h3>
+<p>Use this when nginx, Traefik, HAProxy, a load balancer, or another Caddy instance
+already terminates HTTPS. Josi publishes its web service on a configurable host
+port. Your proxy forwards HTTPS traffic to that port.</p>
+<h3 id="local-http-evaluation">2.3 Local HTTP evaluation</h3>
+<p>Use this only on a trusted machine or trusted LAN for evaluation. Secure
+cookies must be disabled for plain HTTP. Never expose this mode to the public
+Internet.</p>
+<h2 id="host-requirements">3. Host requirements</h2>
+<h3 id="operating-system-and-architecture">3.1 Operating system and architecture</h3>
+<p>Use a 64-bit Linux host supported by Docker Engine. The application image is
+intended for <code>linux/amd64</code> and <code>linux/arm64</code>.</p>
+<p>Do not use a 32-bit operating system. Raspberry Pi installations require a
+64-bit OS. Josi does not publish capacity claims yet; workload, connector use,
+and local inference change resource requirements substantially.</p>
+<h3 id="required-software">3.2 Required software</h3>
+<p>Install:</p>
+<ul>
+<li>Git</li>
+<li>Docker Engine</li>
+<li>Docker Compose v2, invoked as <code>docker compose</code></li>
+<li>OpenSSL, or a readable <code>/dev/urandom</code></li>
+<li><code>curl</code> for host-side verification</li>
+</ul>
+<p>Confirm each dependency:</p>
+<pre><code class="language-bash">git --version
+docker version
+docker compose version
+openssl version
+curl --version
+</code></pre>
+<p><code>docker-compose</code> with a hyphen is the retired Compose v1 client. This manual
+uses Compose v2.</p>
+<h3 id="docker-access">3.3 Docker access</h3>
+<p>Run Docker as root, or configure the installation account to access the Docker
+daemon. Membership in the <code>docker</code> group is effectively root-level access to
+the host. Treat it accordingly.</p>
+<p>Verify access:</p>
+<pre><code class="language-bash">docker run --rm hello-world
+</code></pre>
+<h3 id="network-requirements">3.4 Network requirements</h3>
+<p>For bundled Caddy:</p>
+<ul>
+<li>Create an <code>A</code> record pointing the chosen hostname to the server&#39;s public IPv4
+address.</li>
+<li>Create an <code>AAAA</code> record only if IPv6 actually reaches the server.</li>
+<li>Forward TCP 80 and 443 through the router or firewall.</li>
+<li>Permit outbound DNS and HTTPS so Caddy can reach the ACME certificate
+authority and Josi can reach configured providers.</li>
+</ul>
+<p>Check DNS from a machine outside the server&#39;s LAN:</p>
+<pre><code class="language-bash">dig +short A josi.example.com
+dig +short AAAA josi.example.com
+</code></pre>
+<p>Replace <code>josi.example.com</code> everywhere in this manual with the real hostname.</p>
+<p>If an incorrect <code>AAAA</code> record exists, some clients and certificate validation
+requests may use broken IPv6 even while IPv4 works. Remove the record or fix
+IPv6 routing.</p>
+<h2 id="obtain-the-source">4. Obtain the source</h2>
+<p>Choose a permanent directory. Do not run a long-lived installation from a
+Downloads folder.</p>
+<pre><code class="language-bash">sudo mkdir -p /opt/josi-ce
+sudo chown &quot;$(id -u):$(id -g)&quot; /opt/josi-ce
+git clone &lt;REPOSITORY-URL&gt; /opt/josi-ce
+cd /opt/josi-ce
+</code></pre>
+<p>Until the repository is public, replace <code>&lt;REPOSITORY-URL&gt;</code> with the private
+clone URL available to the operator. Do not put access tokens directly in the
+command or shell history.</p>
+<p>Confirm the checkout and inspect its state:</p>
+<pre><code class="language-bash">git remote -v
+git status --short --branch
+git log -1 --oneline
+</code></pre>
+<p>For a release, check out its signed or documented release tag instead of an
+arbitrary moving branch:</p>
+<pre><code class="language-bash">git fetch --tags
+git checkout &lt;RELEASE-TAG&gt;
+</code></pre>
+<h2 id="read-the-configuration-before-starting">5. Read the configuration before starting</h2>
+<p>The repository includes these deployment files:</p>
+<ul>
+<li><code>docker-compose.yml</code>: default stack and optional profiles</li>
+<li><code>docker-compose.noproxy.yml</code>: publishes the web service for an existing proxy</li>
+<li><code>Caddyfile</code>: bundled reverse proxy configuration</li>
+<li><code>.env.example</code>: non-secret operator settings</li>
+<li><code>scripts/install.sh</code>: generates the master key and database password</li>
+</ul>
+<p>Validate the Compose model before creating anything:</p>
+<pre><code class="language-bash">docker compose config --quiet
+</code></pre>
+<p>This command expands configuration but does not start containers.</p>
+<h2 id="configuration">6. Configure <code>.env</code></h2>
+<p>Copy the example and restrict its permissions:</p>
+<pre><code class="language-bash">cp .env.example .env
+chmod 600 .env
+</code></pre>
+<p>The current <code>.env</code> contains no secrets, but restrictive permissions prevent a
+future operator-added value from becoming broadly readable.</p>
+<p>Edit it with your preferred editor:</p>
+<pre><code class="language-bash">nano .env
+</code></pre>
+<h3 id="domain-and-application-url">6.1 Domain and application URL</h3>
+<p>Public HTTPS example:</p>
+<pre><code class="language-dotenv">JOSI_DOMAIN=josi.example.com
+JOSI_APP_URL=https://josi.example.com
+JOSI_COOKIE_SECURE=true
+JOSI_HTTP_PORT=80
+JOSI_HTTPS_PORT=443
+</code></pre>
+<p><code>JOSI_DOMAIN</code> is the hostname Caddy serves. Do not include <code>https://</code>, a path,
+or a trailing slash.</p>
+<p><code>JOSI_APP_URL</code> is the browser-facing origin. Include the scheme. Do not add a
+trailing slash. OAuth redirect URLs and security checks depend on this value
+being the actual external URL.</p>
+<p><code>JOSI_COOKIE_SECURE=true</code> is required for HTTPS. A browser refuses to send a
+Secure cookie over plain HTTP.</p>
+<p>Local HTTP evaluation example:</p>
+<pre><code class="language-dotenv">JOSI_DOMAIN=localhost
+JOSI_APP_URL=http://localhost
+JOSI_COOKIE_SECURE=false
+JOSI_HTTP_PORT=80
+JOSI_HTTPS_PORT=443
+</code></pre>
+<p>Do not use <code>JOSI_COOKIE_SECURE=false</code> on a public deployment.</p>
+<h3 id="host-ports">6.2 Host ports</h3>
+<p><code>JOSI_HTTP_PORT</code> maps the host&#39;s chosen port to Caddy port 80.
+<code>JOSI_HTTPS_PORT</code> maps the host&#39;s chosen port to Caddy port 443.</p>
+<p>The normal public values are 80 and 443. Changing them means users must include
+the nonstandard port in the URL unless another device forwards standard ports.</p>
+<p>Check for conflicts before starting:</p>
+<pre><code class="language-bash">sudo ss -lntp | grep -E &#39;:(80|443)[[:space:]]&#39; || true
+</code></pre>
+<h3 id="database-names">6.3 Database names</h3>
+<p>Defaults:</p>
+<pre><code class="language-dotenv">POSTGRES_DB=josi
+POSTGRES_USER=josi
+</code></pre>
+<p>These values are identifiers, not passwords. Changing either after the database
+volume has been initialized does not rename the existing database or user. Set
+them once before first start and leave them stable.</p>
+<h3 id="application-image">6.4 Application image</h3>
+<p>Defaults:</p>
+<pre><code class="language-dotenv">JOSI_IMAGE=josi-ce
+JOSI_TAG=local
+</code></pre>
+<p>The current Compose file builds from the local checkout and tags the resulting
+image <code>josi-ce:local</code>. A future published release may provide a registry image
+and immutable version tag. Do not use a floating <code>latest</code> tag for a controlled
+deployment.</p>
+<h3 id="optional-service-limits">6.5 Optional-service limits</h3>
+<p>Defaults:</p>
+<pre><code class="language-dotenv">JOSI_OCR_CPUS=1.0
+JOSI_OCR_MEMORY=512m
+JOSI_CLAMAV_MEMORY=1500m
+</code></pre>
+<p>These are container ceilings. OCR and ClamAV do not start merely because the
+values exist. Their Compose profiles must also be selected.</p>
+<p>ClamAV needs substantial memory while loading and updating signatures. Do not
+enable it on a constrained host without observing memory pressure.</p>
+<h2 id="generate-installation-secrets">7. Generate installation secrets</h2>
+<p>Run:</p>
+<pre><code class="language-bash">./scripts/install.sh
+</code></pre>
+<p>The script creates:</p>
+<ul>
+<li><code>secrets/master.key</code>: encrypts stored provider, OAuth, and mail credentials</li>
+<li><code>secrets/db_password</code>: authenticates the application to PostgreSQL</li>
+</ul>
+<p>The directory is mode <code>0700</code>; each file is mode <code>0600</code>. Values are deliberately
+not printed.</p>
+<p>Verify without changing anything:</p>
+<pre><code class="language-bash">./scripts/install.sh --check
+</code></pre>
+<p>The installer is idempotent: rerunning it leaves existing secret files alone.
+It never rotates the master key.</p>
+<h3 id="master-key-warning">7.1 Master-key warning</h3>
+<p>The master key is not stored in PostgreSQL. That protects credentials if a
+database dump is stolen, but it creates an operational obligation:</p>
+<p><strong>Losing <code>secrets/master.key</code> makes encrypted credentials permanently
+unreadable.</strong> A database backup alone is insufficient.</p>
+<p>Before continuing, copy the master key to encrypted storage on a different
+device. Example using removable media already mounted at <code>/mnt/secure-backup</code>:</p>
+<pre><code class="language-bash">install -m 600 secrets/master.key /mnt/secure-backup/josi-master.key
+</code></pre>
+<p>Do not email the key, paste it into chat, store it in Git, or include it in a
+normal unencrypted cloud folder. Record which installation it belongs to.</p>
+<p>Check that Git ignores the generated directory:</p>
+<pre><code class="language-bash">git check-ignore -v secrets/master.key secrets/db_password
+</code></pre>
+<h2 id="build-and-start-the-default-stack">8. Build and start the default stack</h2>
+<p>Review the resolved configuration. This output should contain file paths but
+must not contain the secret values:</p>
+<pre><code class="language-bash">docker compose config
+</code></pre>
+<p>Build the application image:</p>
+<pre><code class="language-bash">docker compose build --pull
+</code></pre>
+<p>Start in detached mode:</p>
+<pre><code class="language-bash">docker compose up -d
+</code></pre>
+<p>Watch startup:</p>
+<pre><code class="language-bash">docker compose ps
+docker compose logs -f --tail=200
+</code></pre>
+<p>Press <code>Ctrl+C</code> to stop following logs. This does not stop the containers.</p>
+<p>Expected state:</p>
+<ul>
+<li><code>db</code>, <code>web</code>, <code>worker</code>, and <code>caddy</code> are running.</li>
+<li><code>migrate</code> exited with code 0 after applying migrations.</li>
+<li><code>ocr</code> and <code>clamav</code> do not exist unless their profiles were enabled.</li>
+</ul>
+<p>Inspect a failed service without restarting the whole stack:</p>
+<pre><code class="language-bash">docker compose logs --tail=300 &lt;SERVICE&gt;
+docker compose ps -a
+</code></pre>
+<p>Replace <code>&lt;SERVICE&gt;</code> with <code>db</code>, <code>migrate</code>, <code>web</code>, <code>worker</code>, or <code>caddy</code>.</p>
+<h2 id="verify-the-installation">9. Verify the installation</h2>
+<h3 id="container-health">9.1 Container health</h3>
+<pre><code class="language-bash">docker compose ps
+</code></pre>
+<p>Do not equate &quot;running&quot; with &quot;ready.&quot; The health and readiness endpoints test
+different layers.</p>
+<h3 id="liveness">9.2 Liveness</h3>
+<p>For public HTTPS:</p>
+<pre><code class="language-bash">curl -fsS https://josi.example.com/health
+</code></pre>
+<p>For localhost evaluation:</p>
+<pre><code class="language-bash">curl -fsS http://localhost/health
+</code></pre>
+<p>Liveness means the API process answers.</p>
+<h3 id="readiness">9.3 Readiness</h3>
+<pre><code class="language-bash">curl -fsS https://josi.example.com/ready
+</code></pre>
+<p>Readiness additionally checks the database, migrations, and master-key
+availability. A live but unready service should not receive normal traffic.</p>
+<h3 id="tls-and-redirects">9.4 TLS and redirects</h3>
+<pre><code class="language-bash">curl -I http://josi.example.com
+curl -I https://josi.example.com
+openssl s_client -connect josi.example.com:443 -servername josi.example.com &lt;/dev/null
+</code></pre>
+<p>If certificate issuance fails, check DNS, inbound ports, Caddy logs, router
+port forwarding, firewall policy, and incorrect IPv6 records.</p>
+<h3 id="optional-services-remain-absent">9.5 Optional services remain absent</h3>
+<pre><code class="language-bash">docker compose ps --all
+docker ps --format &#39;{{.Names}}&#39; | grep -E &#39;(ocr|clamav)&#39; &amp;&amp; echo unexpected || echo absent
+</code></pre>
+<h2 id="complete-the-setup-wizard">10. Complete the setup wizard</h2>
+<p>Open <code>JOSI_APP_URL</code> in a browser. A fresh installation exposes the setup wizard
+and refuses normal application routes until setup completes.</p>
+<p>The wizard covers:</p>
+<ol>
+<li>Host checks</li>
+<li>Super-admin account</li>
+<li>Domain and HTTPS review</li>
+<li>LLM provider</li>
+<li>System and Josi mail profiles</li>
+<li>Optional Google and Microsoft connector clients</li>
+<li>Security and privacy choices</li>
+<li>Explicit telemetry choice</li>
+<li>Review and completion</li>
+</ol>
+<p>Setup is single-use. After completion, setup routes return 404 and cannot be
+used to create another super administrator.</p>
+<p>Record recovery information in the organization&#39;s password manager. Do not put
+provider keys, OAuth secrets, SMTP passwords, or recovery material in this
+repository.</p>
+<h2 id="enable-optional-ocr-and-clamav-profiles">11. Enable optional OCR and ClamAV profiles</h2>
+<p>Profiles may be combined.</p>
+<p>OCR only:</p>
+<pre><code class="language-bash">docker compose --profile ocr up -d
+</code></pre>
+<p>ClamAV only:</p>
+<pre><code class="language-bash">docker compose --profile clamav up -d
+</code></pre>
+<p>Both:</p>
+<pre><code class="language-bash">docker compose --profile ocr --profile clamav up -d
+</code></pre>
+<p>Verify:</p>
+<pre><code class="language-bash">docker compose --profile ocr --profile clamav ps
+docker compose logs --tail=200 ocr clamav
+</code></pre>
+<p>ClamAV&#39;s first signature load can take several minutes. Its healthcheck allows
+a five-minute start period.</p>
+<p>To stop and remove an optional service while leaving the core running:</p>
+<pre><code class="language-bash">docker compose stop ocr
+docker compose rm -f ocr
+</code></pre>
+<p>Use <code>clamav</code> in place of <code>ocr</code> for the malware scanner. Removing the ClamAV
+container does not remove the named signature volume unless you deliberately
+remove volumes.</p>
+<blockquote>
+<p><strong>Document-processing boundary:</strong> supported files can be extracted,
+scanned, indexed, searched and cited, and configured cloud sources can
+synchronize. Unsupported, encrypted, unsafe or over-limit files are skipped
+with an explicit reason. OCR and ClamAV remain optional services and must be
+provisioned and resourced before they are relied on.</p>
+</blockquote>
+<h2 id="use-an-existing-reverse-proxy">12. Use an existing reverse proxy</h2>
+<p>Create <code>.env</code> with the real public URL and a local published port:</p>
+<pre><code class="language-dotenv">JOSI_DOMAIN=josi.example.com
+JOSI_APP_URL=https://josi.example.com
+JOSI_COOKIE_SECURE=true
+JOSI_WEB_PORT=8080
+</code></pre>
+<p>Start with the override and scale bundled Caddy to zero:</p>
+<pre><code class="language-bash">docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.noproxy.yml \
+  up -d --scale caddy=0
+</code></pre>
+<p>Josi is then available to the host proxy at <code>http://127.0.0.1:8080</code> if Docker
+binds to loopback. The current override publishes on all host interfaces. If
+the machine is not protected by a firewall, tighten the port mapping in a local
+override:</p>
+<pre><code class="language-yaml">services:
+  web:
+    ports:
+      - &quot;127.0.0.1:${JOSI_WEB_PORT:-8080}:8080&quot;
+</code></pre>
+<p>Save that as <code>docker-compose.local.yml</code> and include it last:</p>
+<pre><code class="language-bash">docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.noproxy.yml \
+  -f docker-compose.local.yml \
+  up -d --scale caddy=0
+</code></pre>
+<p>The external proxy must:</p>
+<ul>
+<li>Terminate HTTPS with a valid certificate.</li>
+<li>Preserve the original <code>Host</code> header.</li>
+<li>Forward <code>X-Forwarded-For</code>.</li>
+<li>Forward <code>X-Forwarded-Proto: https</code>.</li>
+<li>Support normal long-lived HTTP responses used by the application.</li>
+<li>Apply sensible request-size and timeout limits without truncating supported
+application traffic.</li>
+</ul>
+<p>Minimal nginx location:</p>
+<pre><code class="language-nginx">location / {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+</code></pre>
+<p>After proxy changes, verify <code>/health</code>, <code>/ready</code>, login, logout, and a browser
+refresh on an authenticated route.</p>
+<h2 id="firewall-guidance">13. Firewall guidance</h2>
+<p>Bundled Caddy normally needs only:</p>
+<ul>
+<li>TCP 22 from trusted administration addresses, if SSH is used</li>
+<li>TCP 80 from the Internet</li>
+<li>TCP 443 from the Internet</li>
+</ul>
+<p>Do not expose PostgreSQL. The Compose file publishes no database port.</p>
+<p>Example UFW policy, only after confirming SSH access and adjusting the SSH rule
+for the actual environment:</p>
+<pre><code class="language-bash">sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+sudo ufw status verbose
+</code></pre>
+<p>Firewall changes can lock you out. Keep an existing SSH session open and test a
+second session before closing the first.</p>
+<h2 id="normal-operations">14. Normal operations</h2>
+<p>Show status:</p>
+<pre><code class="language-bash">docker compose ps
+</code></pre>
+<p>Follow all logs:</p>
+<pre><code class="language-bash">docker compose logs -f --tail=200
+</code></pre>
+<p>Follow one service:</p>
+<pre><code class="language-bash">docker compose logs -f --tail=200 web
+</code></pre>
+<p>Restart one service:</p>
+<pre><code class="language-bash">docker compose restart web
+</code></pre>
+<p>Stop without deleting containers or volumes:</p>
+<pre><code class="language-bash">docker compose stop
+</code></pre>
+<p>Start stopped containers:</p>
+<pre><code class="language-bash">docker compose start
+</code></pre>
+<p>Recreate containers from the current configuration:</p>
+<pre><code class="language-bash">docker compose up -d
+</code></pre>
+<h3 id="commands-that-are-intentionally-not-routine">14.1 Commands that are intentionally not routine</h3>
+<p><code>docker compose down</code> removes containers and networks but preserves named
+volumes unless <code>--volumes</code> is supplied.</p>
+<p><strong>Never run <code>docker compose down --volumes</code> as an ordinary troubleshooting
+step.</strong> It deletes the PostgreSQL data volume and other named volumes.</p>
+<p>Do not delete <code>secrets/master.key</code>. Do not regenerate it to fix a startup
+problem. A replacement key cannot decrypt existing credentials.</p>
+<h2 id="backup-and-restore">15. Backup and restore</h2>
+<p>Backup and restore are implemented and have passed a destructive acceptance
+test in which the schema was dropped, restored and encrypted credentials were
+proved readable with the original master key and unreadable without it. Create
+a full or portable backup under <strong>Admin → Backups</strong>, download the
+completed archive, and test restoration before relying on it.</p>
+<p>A complete backup set preserves:</p>
+<ul>
+<li>PostgreSQL data</li>
+<li>The exact <code>secrets/master.key</code></li>
+<li>Application configuration</li>
+<li>Uploads and recovery/history data included by the selected backup kind</li>
+<li>A record of the Josi release being restored</li>
+</ul>
+<p>The master key must be protected separately from the database backup. Restore
+must fail safely when the wrong key is supplied.</p>
+<h2 id="upgrade-and-rollback">16. Upgrade and rollback</h2>
+<p>Josi never updates itself. The application has a tested backup-first,
+health-check and rollback sequence, but no release download channel is configured
+in Community Preview, so there is no in-product upgrade yet. Operators must use
+a version-pinned published image, take and validate a full backup first, preserve
+the master key separately, apply migrations, verify service and public-path
+health, and retain the previous image and backup for rollback.</p>
+<h2 id="troubleshooting">17. Troubleshooting</h2>
+<h3 id="compose-cannot-read-a-secret-file">17.1 Compose cannot read a secret file</h3>
+<p>Symptoms include <code>secrets/master.key not found</code> or <code>secrets/db_password not found</code>.</p>
+<pre><code class="language-bash">./scripts/install.sh --check
+ls -ld secrets
+ls -l secrets/master.key secrets/db_password
+</code></pre>
+<p>Run commands from the repository root. Do not solve permission errors by making
+the secrets world-readable.</p>
+<h3 id="database-is-unhealthy">17.2 Database is unhealthy</h3>
+<pre><code class="language-bash">docker compose ps db
+docker compose logs --tail=300 db
+docker inspect --format &#39;{{json .State.Health}}&#39; josi-ce-db-1
+</code></pre>
+<p>Container names can vary with the Compose project name. Use <code>docker compose ps -q db</code> when scripting:</p>
+<pre><code class="language-bash">docker inspect --format &#39;{{json .State.Health}}&#39; &quot;$(docker compose ps -q db)&quot;
+</code></pre>
+<p>Common causes are disk exhaustion, filesystem permission problems, corrupt
+storage, and changing database identifiers after initialization.</p>
+<h3 id="migrator-exited-nonzero">17.3 Migrator exited nonzero</h3>
+<pre><code class="language-bash">docker compose ps -a migrate
+docker compose logs --tail=500 migrate
+</code></pre>
+<p>Do not repeatedly delete the database volume. Preserve the evidence, identify
+the failing migration, and use the release&#39;s documented recovery path.</p>
+<h3 id="web-is-running-but-ready-fails">17.4 Web is running but <code>/ready</code> fails</h3>
+<pre><code class="language-bash">docker compose logs --tail=300 web
+curl -i http://127.0.0.1/ready
+./scripts/install.sh --check
+</code></pre>
+<p>Readiness distinguishes database, migrations, and master-key failures. Fix the
+reported dependency instead of masking the check.</p>
+<h3 id="login-works-locally-but-fails-through-a-proxy">17.5 Login works locally but fails through a proxy</h3>
+<p>Confirm:</p>
+<ul>
+<li><code>JOSI_APP_URL</code> exactly matches the browser&#39;s HTTPS origin.</li>
+<li><code>JOSI_COOKIE_SECURE=true</code> for HTTPS.</li>
+<li>The proxy sends <code>X-Forwarded-Proto: https</code>.</li>
+<li>The browser is not being redirected between different hostnames.</li>
+<li>System time is correct.</li>
+</ul>
+<p>For plain HTTP evaluation only, set <code>JOSI_COOKIE_SECURE=false</code>, recreate the web
+container, and clear cookies for the host.</p>
+<h3 id="caddy-restarts-or-cannot-issue-a-certificate">17.6 Caddy restarts or cannot issue a certificate</h3>
+<pre><code class="language-bash">docker compose ps caddy
+docker compose logs --tail=500 caddy
+dig +short A josi.example.com
+dig +short AAAA josi.example.com
+</code></pre>
+<p>Check that ports 80 and 443 reach this server, that another service is not
+already bound to them, and that DNS does not contain a stale address.</p>
+<p><code>JOSI_ACME_EMAIL</code> in <code>.env</code> is currently informational. The supplied Caddyfile
+does not interpolate it because an empty <code>email</code> directive makes Caddy fail to
+parse. Certificate issuance works without an ACME contact address.</p>
+<h3 id="port-already-in-use">17.7 Port already in use</h3>
+<pre><code class="language-bash">sudo ss -lntp | grep -E &#39;:(80|443|8080)[[:space:]]&#39;
+docker ps --format &#39;table {{.Names}}\t{{.Ports}}&#39;
+</code></pre>
+<p>Stop the conflicting service, choose different host ports, or use the existing
+reverse-proxy deployment shape.</p>
+<h3 id="gmail-rejects-the-smtp-username-or-password">17.7.1 Gmail rejects the SMTP username or password</h3>
+<p>For Gmail, use the full Gmail address as the SMTP username and a Google App
+Password created after enabling 2-Step Verification. Do not use the normal
+Google account password.</p>
+<p>Google displays an App Password as four groups of four lowercase letters. Josi
+removes spaces automatically, but must receive exactly 16 letters. Enable
+<strong>Show password</strong> before selecting <strong>Save and test</strong>
+and verify <code>4-4-4-4</code>. Google&#39;s copy action can occasionally omit the
+final character; <code>4-4-4-3</code> means the pasted value is incomplete even
+when it came directly from Google&#39;s page. Append the missing displayed
+character or generate a new App Password.</p>
+<p>Regenerate any App Password that appears in a screenshot, message, support
+ticket or log. Treat it as exposed even if the test failed.</p>
+<h3 id="docker-build-fails">17.8 Docker build fails</h3>
+<pre><code class="language-bash">docker compose build --pull --no-cache
+docker system df
+df -h
+df -i
+</code></pre>
+<p>Capture the first real compiler or package error, not only the final nonzero
+exit line. Do not run broad Docker prune commands on a shared host without
+reviewing what they will delete.</p>
+<h3 id="host-is-out-of-disk-space">17.9 Host is out of disk space</h3>
+<p>Inspect before removing anything:</p>
+<pre><code class="language-bash">df -h
+docker system df -v
+docker volume ls
+docker image ls
+</code></pre>
+<p>Do not delete a volume merely because its name looks old. Confirm ownership and
+take a restorable backup first.</p>
+<h3 id="host-architecture-mismatch">17.10 Host architecture mismatch</h3>
+<pre><code class="language-bash">uname -m
+docker info --format &#39;{{.Architecture}}&#39;
+docker image inspect &quot;${JOSI_IMAGE:-josi-ce}:${JOSI_TAG:-local}&quot; --format &#39;{{.Architecture}}&#39;
+</code></pre>
+<p>Use a 64-bit <code>amd64</code> or <code>arm64</code> OS and matching image.</p>
+<h3 id="clamav-remains-unhealthy">17.11 ClamAV remains unhealthy</h3>
+<pre><code class="language-bash">docker compose --profile clamav ps clamav
+docker compose --profile clamav logs --tail=500 clamav
+docker stats --no-stream
+</code></pre>
+<p>Allow time for initial signature loading and verify the host has enough memory.
+An out-of-memory kill appears in container state and host kernel logs.</p>
+<h3 id="managing-connector-permissions">Managing connector permissions</h3>
+<p>On <strong>Settings → Connectors</strong>, <strong>Member permissions</strong> controls which
+connector features members are allowed to enable for their own accounts.
+Allowing a permission does not turn it on for anyone or grant access by itself;
+each member must still connect their own account and enable the feature.</p>
+<p>Google, Microsoft, Dropbox, and Box show one provider consent screen for the
+complete set of features Josi currently supports. Those provider permissions do
+not turn features on inside Josi: members still use the local On/Off controls.
+Older connections with partial permissions show one account-level
+<strong>Upgrade permissions / Reconnect</strong> action instead of approval buttons
+beside individual features.</p>
+<p>OAuth application forms only enable <strong>Save</strong> after a valid change.
+Wait for the named saved confirmation before leaving the page; secrets remain
+masked and are never shown again.</p>
+<h2 id="security-checklist">18. Security checklist</h2>
+<p>Before considering an installation reachable by other people, confirm:</p>
+<ul>
+<li><input disabled="" type="checkbox"> The checkout is an intended release, not an arbitrary dirty branch.</li>
+<li><input disabled="" type="checkbox"> <code>scripts/scan-secrets.sh</code> passes.</li>
+<li><input disabled="" type="checkbox"> <code>scripts/install.sh --check</code> passes.</li>
+<li><input disabled="" type="checkbox"> The master key has an encrypted off-host copy.</li>
+<li><input disabled="" type="checkbox"> <code>.env</code> contains the correct public origin.</li>
+<li><input disabled="" type="checkbox"> HTTPS works with a valid certificate.</li>
+<li><input disabled="" type="checkbox"> Secure cookies remain enabled for HTTPS.</li>
+<li><input disabled="" type="checkbox"> PostgreSQL is not published to the host or Internet.</li>
+<li><input disabled="" type="checkbox"> Host security updates are enabled and current.</li>
+<li><input disabled="" type="checkbox"> SSH uses strong authentication and limited network exposure.</li>
+<li><input disabled="" type="checkbox"> Optional OCR and ClamAV services are enabled only when supported and
+resourced.</li>
+<li><input disabled="" type="checkbox"> Provider, OAuth, and SMTP credentials belong to the operator.</li>
+<li><input disabled="" type="checkbox"> External LLM processing is disclosed to users.</li>
+<li><input disabled="" type="checkbox"> Telemetry was explicitly chosen rather than assumed.</li>
+<li><input disabled="" type="checkbox"> <code>/health</code> and <code>/ready</code> are monitored.</li>
+<li><input disabled="" type="checkbox"> A current full backup and the separate master key have been restored in a test.</li>
+<li><input disabled="" type="checkbox"> Current threat-model and release gates have passed before public launch.</li>
+</ul>
+<h2 id="collecting-useful-support-information">19. Collecting useful support information</h2>
+<p>Josi creates a redacted diagnostics bundle locally. Review it before approving
+submission to an operator-configured support gateway; Community installations
+ship with no gateway. The fixed bundle schema excludes messages, emails,
+documents, prompts, database rows and credentials. Container health and logs are
+not collected because the application has no Docker socket. If you inspect logs
+yourself, redact them before sharing. Never send:</p>
+<ul>
+<li><code>secrets/master.key</code></li>
+<li><code>secrets/db_password</code></li>
+<li>Provider API keys</li>
+<li>OAuth client secrets or access/refresh tokens</li>
+<li>SMTP passwords</li>
+<li>Message, document, contact, calendar, or prompt content</li>
+</ul>
+<p>Safe first-line metadata usually includes the Josi commit or release, host OS,
+CPU architecture, Docker versions, Compose service state, the failing endpoint,
+and the exact error after secrets and user content are removed.</p>
+<pre><code class="language-bash">git rev-parse HEAD
+uname -a
+docker version
+docker compose version
+docker compose ps -a
+</code></pre>
+<h2 id="offline-password-recovery">Offline password recovery</h2>
+<p>If reset email is unavailable, run <code>./reset-password.sh USERNAME_OR_EMAIL</code>
+from the installation directory. The command accepts the new password through a
+hidden prompt, changes exactly one active account, and invalidates its existing
+sessions and unused reset links. Reset-email links use the exact browser-facing
+origin selected in the installer, including LAN HTTP and non-default ports.</p>
+<h2 id="developer-workspace">Optional developer workspace</h2>
+<p>The browser installer can optionally bind one host project folder into Josi at
+<code>/workspace</code>. Skip it unless coding connectors need local files. Choose
+read-only access for inspection or read/write for editing, tests, and Git. The
+installer validates the requested capability and refuses system, credential,
+secret, and Josi installation paths. Normal Josi containers never receive the
+Docker socket.</p>
+<h2 id="setup-recovery-key">Setup recovery key and model test</h2>
+<p>The Vault key is displayed only as a masked preview ending in its true final
+four characters. Use the explicit Copy or Download action and store it offline.
+The launch checklist reuses that acknowledgement. The Language Model step saves
+the configuration and runs the full five-part capability test before setup may
+advance.</p>
+<h2 id="uninstallation">20. Uninstallation</h2>
+<p>There is no supported uninstall-and-preserve-data wizard yet.</p>
+<p>Stopping the installation is reversible:</p>
+<pre><code class="language-bash">docker compose stop
+</code></pre>
+<p>Removing containers and networks while retaining named volumes:</p>
+<pre><code class="language-bash">docker compose down
+</code></pre>
+<p>Deleting named volumes or the installation directory destroys data. Before any
+permanent removal, create and verify a complete backup, and separately preserve
+the master key. This manual deliberately
+does not provide a one-line destructive wipe command.</p>
+</article>
+    </main>
+  </div>
+  <footer class="footer">Josi CE is created and published by SOCAL RECEPTIONIST LLC. <a href="../legal/#terms-of-use">Terms</a> · <a href="../legal/#privacy-notice">Privacy</a> · <a href="../legal/#cookie-notice">Cookies</a> · <a href="../legal/#software-and-paid-feature-licences">Licences</a>. Community Preview software carries no support entitlement or SLA.</footer>
+  <aside class="help-chat" aria-label="Josi CE Help chat">
+    <section class="help-chat-panel" id="help-chat-panel" aria-label="AI Help assistant" hidden>
+      <div class="help-chat-head"><span>Ask Josi CE</span><button type="button" id="help-chat-close" aria-label="Close chat">×</button></div>
+      <div class="help-chat-log" id="help-chat-log" role="log" aria-live="polite"><div class="help-chat-msg">Hi! I can help with Josi CE guides, troubleshooting, and general marketing questions. What would you like to know?</div></div>
+      <form class="help-chat-form" id="help-chat-form"><input id="help-chat-input" aria-label="Your question" placeholder="Ask a question…" maxlength="1200" required autocomplete="off"><button type="submit">Send</button></form>
+      <p class="help-chat-disclosure">AI replies use public docs and Groq. Don't share private data or credentials. No human support or SLA.</p>
+    </section>
+    <button type="button" class="help-chat-toggle" id="help-chat-toggle" aria-controls="help-chat-panel" aria-expanded="false">Ask Josi CE</button>
+  </aside>
+  <script>
+    document.querySelectorAll('pre').forEach(function(pre){var b=document.createElement('button');b.className='copy';b.textContent='Copy';b.addEventListener('click',function(){navigator.clipboard.writeText(pre.innerText.replace(/^Copy\n/,''));b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1200)});pre.prepend(b)});
+    (function(){
+      var toggle=document.getElementById('help-chat-toggle'), panel=document.getElementById('help-chat-panel');
+      var form=document.getElementById('help-chat-form'), input=document.getElementById('help-chat-input'), log=document.getElementById('help-chat-log');
+      if(!['help.heyjosi.com','josi-ce-docs.netlify.app'].includes(location.hostname)){
+        toggle.textContent='Open Help chat';toggle.addEventListener('click',function(){location.assign('https://josi-ce-docs.netlify.app/')});return;
+      }
+      var endpoint='/.netlify/functions/help-chat';
+      var history=[];
+      function open(yes){panel.hidden=!yes;toggle.setAttribute('aria-expanded',String(yes));if(yes)input.focus();else toggle.focus()}
+      toggle.addEventListener('click',function(){open(panel.hidden)});
+      document.getElementById('help-chat-close').addEventListener('click',function(){open(false)});
+      function add(text,visitor,sources){var row=document.createElement('div');row.className='help-chat-msg'+(visitor?' visitor':'');row.textContent=text;
+        (sources||[]).forEach(function(s){if(!/^https:\/\/(help\.heyjosi\.com|josi-ce-docs\.netlify\.app)\//.test(s.url))return;var a=document.createElement('a');a.href=s.url;a.textContent='Read: '+s.title;a.target='_blank';a.rel='noopener noreferrer';row.appendChild(a)});
+        log.appendChild(row);log.scrollTop=log.scrollHeight;return row}
+      form.addEventListener('submit',async function(e){e.preventDefault();var text=input.value.trim();if(!text)return;
+        var button=form.querySelector('button');button.disabled=true;add(text,true);input.value='';var pending=add('Thinking…',false);
+        try{var response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history:history.slice(-6)})});
+          var result=await response.json();pending.remove();add(response.ok?result.reply:(result.error||'Please try again later.'),false,result.sources);
+          if(response.ok){history.push({role:'user',content:text},{role:'assistant',content:result.reply})}
+        }catch(_){pending.remove();add('Connection trouble. Please try again in a moment.',false)}finally{button.disabled=false;input.focus()}
+      });
+    })();
+  </script>
+</body>
+</html>

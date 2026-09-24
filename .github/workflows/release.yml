@@ -1,0 +1,251 @@
+# Publishing the images §0 of INSTALLATION.md tells operators to pull.
+#
+# The normal install downloads three files and runs `docker compose up -d`.
+# That only works if the images exist, and until this workflow ran they did
+# not — the compose file was correct and pointed at nothing, which the release
+# warning said plainly.
+#
+# WHY CI RATHER THAN A LAPTOP. A release image should be reproducible from a
+# commit by anybody with the repository, not from whichever machine happened to
+# have Docker that day. The digest this produces is tied to a tag and a commit,
+# and the workflow is the record of how it was made.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Image tag to publish (e.g. 0.1.0). Also used as the version.'
+        required: true
+        default: '0.1.0'
+      publish_latest:
+        description: 'Also move the stable latest aliases to this version.'
+        required: true
+        type: boolean
+        default: false
+
+
+permissions:
+  contents: read
+  # What lets GITHUB_TOKEN push to ghcr.io. Nothing else needs widening: no
+  # secret is added to this repository for the registry.
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    if: ${{ github.repository == 'vaxman14/josi-ce' && github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: source
+        name: Verify the public source is this exact tree
+        shell: bash
+        run: |
+          git fetch --no-tags --depth=1 https://github.com/vaxman14/josi-ce-public.git main
+          test "$(git rev-parse 'FETCH_HEAD^{tree}')" = "$(git rev-parse 'HEAD^{tree}')"
+          echo "sha=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_OUTPUT"
+
+      # The version being published, from the tag or from the manual input.
+      - id: version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The repository owner, lower-cased. GHCR rejects an uppercase path, and
+      # a GitHub username may contain uppercase.
+      - id: owner
+        run: echo "value=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      # CE targets old 64-bit desktops and Raspberry Pis, so arm64 is
+      # first-class. Cross-building it on an amd64 runner needs QEMU.
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          # The existing package predates this public repository and does not
+          # grant its ephemeral GITHUB_TOKEN write access. Use the dedicated,
+          # least-scoped Packages credential stored as a repository secret.
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      # The tests run against the same source that is about to be published.
+      # Publishing an image whose suite was never run is how a release goes out
+      # with a defect somebody had already written a test for.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx tsc -b
+      - run: npm test
+      - run: bash scripts/scan-secrets.sh
+
+      # Public by definition: this is the verifier embedded in supported
+      # SOCAL RECEPTIONIST LLC builds, never the private licence-signing key.
+      # Keeping it in the repository makes the exact authority reproducible
+      # and reviewable instead of depending on an invisible CI setting.
+      - id: licence-key
+        name: Validate publisher licence verification key
+        shell: bash
+        run: |
+          key="$(tr -d '\r\n' < publisher/licence-verification-key.b64)"
+          if ! [[ "$key" =~ ^[A-Za-z0-9+/]{43}=$ ]]; then
+            echo "publisher licence verification key is not a raw base64 Ed25519 public key" >&2
+            exit 1
+          fi
+          echo "value=$key" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          # The edition is stamped into the build, not read from the
+          # environment at start — see packages/core/src/edition.ts. A published
+          # CE image is CE permanently.
+          build-args: |
+            JOSI_EDITION=ce
+            JOSI_BUILD_ID=${{ steps.source.outputs.sha }}
+            JOSI_LICENCE_KEY=${{ steps.licence-key.outputs.value }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/josi-ce:${{ steps.version.outputs.value }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/vaxman14/josi-ce-public
+            org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
+            org.opencontainers.image.version=${{ steps.version.outputs.value }}
+            org.opencontainers.image.licenses=AGPL-3.0-or-later
+          # No `latest` tag, deliberately. An appliance that changes version
+          # when it restarts is not an appliance, and the compose file pins a
+          # concrete default for the same reason.
+          provenance: true
+          sbom: true
+
+      - name: Build and push one-shot AIO installer
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.aio
+          platforms: linux/amd64,linux/arm64
+          push: true
+          build-args: |
+            JOSI_VERSION=${{ steps.version.outputs.value }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/josi-ce-installer:${{ steps.version.outputs.value }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/vaxman14/josi-ce-public
+            org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
+            org.opencontainers.image.version=${{ steps.version.outputs.value }}
+            org.opencontainers.image.licenses=AGPL-3.0-or-later
+          provenance: true
+          sbom: true
+
+      # Tagged releases are the normal stable-release path and therefore move
+      # the aliases automatically. Manual republishes must opt in so rebuilding
+      # an older version cannot silently downgrade `latest`.
+      - name: Publish stable latest aliases
+        if: ${{ github.event_name == 'push' || inputs.publish_latest == true }}
+        run: |
+          docker buildx imagetools create \
+            --tag "${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/josi-ce:latest" \
+            "${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/josi-ce:${{ steps.version.outputs.value }}"
+          docker buildx imagetools create \
+            --tag "${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/josi-ce-installer:latest" \
+            "${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/josi-ce-installer:${{ steps.version.outputs.value }}"
+
+      - name: Report the digest
+        run: |
+          echo "Published:"
+          docker buildx imagetools inspect \
+            "${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/josi-ce:${{ steps.version.outputs.value }}"
+
+  # CLI releases are attached only to real version tags. The signing identity
+  # is the short-lived GitHub Actions OIDC certificate for this exact workflow
+  # and tag; there is no long-lived signing material to leak or rotate.
+  cli-release:
+    if: ${{ github.repository == 'vaxman14/josi-ce-public' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+    # CLI publication is independently tested and signed; do not couple it to
+    # application-image build time or the Actions artifact-storage quota.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      # v3 tag resolved and reviewed 2026-09-19; pin the action itself as well
+      # as the Cosign binary version used by the release boundary.
+      - uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
+        with:
+          cosign-release: 'v2.4.1'
+      - name: Build and sign CLI release files
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          sh -n get.heyjosi.com/install.sh
+          npm run test:cli
+          bash scripts/build-cli-release.sh \
+            --version "$version" \
+            --output-dir dist/cli \
+            --sign
+          install -m 0755 get.heyjosi.com/install.sh dist/cli/install.sh
+          sha256sum dist/cli/install.sh | awk '{print $1}' > dist/cli/install.sh.sha256
+      - name: Publish CLI files on the numbered GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release create "$GITHUB_REF_NAME" \
+              --verify-tag \
+              --title "Josi CE $GITHUB_REF_NAME" \
+              --generate-notes
+          fi
+          gh release upload "$GITHUB_REF_NAME" dist/cli/* --clobber
+
+  dockerhub-mirror:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'vaxman14/josi-ce' && github.event_name == 'workflow_dispatch' && vars.DOCKERHUB_MIRROR_ENABLED == 'true' }}
+    steps:
+      - id: version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+      - id: owner
+        run: echo "value=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          # The installer package predates this repository, so its ephemeral
+          # GITHUB_TOKEN cannot pull that private source index for mirroring.
+          password: ${{ secrets.GHCR_TOKEN }}
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Mirror application OCI index
+        run: |
+          docker buildx imagetools create \
+            --tag "${{ secrets.DOCKERHUB_USERNAME }}/josi-ce:${{ steps.version.outputs.value }}" \
+            "ghcr.io/${{ steps.owner.outputs.value }}/josi-ce:${{ steps.version.outputs.value }}"
+      - name: Mirror installer OCI index
+        run: |
+          docker buildx imagetools create \
+            --tag "${{ secrets.DOCKERHUB_USERNAME }}/josi-ce-installer:${{ steps.version.outputs.value }}" \
+            "ghcr.io/${{ steps.owner.outputs.value }}/josi-ce-installer:${{ steps.version.outputs.value }}"

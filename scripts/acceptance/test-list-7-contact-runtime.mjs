@@ -1,0 +1,40 @@
+// Run only against a fresh disposable PostgreSQL database. Real SQL/driver;
+// provider HTTP responses are explicit synthetic fixtures, never real accounts.
+import postgres from 'postgres';
+import { readdir, readFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import { MasterKey, postgresDb } from '../../packages/core/dist/index.js';
+import { createUser } from '../../packages/auth/dist/index.js';
+import { saveClient, upsertConnection, setCapability, dueOrigins, syncOrigin, listOrigins } from '../../packages/connectors/dist/index.js';
+import { providerStatus } from '../../packages/agent/dist/providerStatus.js';
+const sql=postgres('postgres://postgres@127.0.0.1:55497/postgres',{max:1,onnotice:()=>{}});
+const db=postgresDb(sql);
+try {
+ const existing=await sql`select count(*)::int as n from information_schema.tables where table_schema='public'`;
+ assert.equal(existing[0].n,0,'refuse to touch a nonempty database');
+ const migrationDir=new URL('../../packages/db/migrations/',import.meta.url);
+ const migrations=(await readdir(migrationDir)).filter(x=>x.endsWith('.sql')).sort();
+ for(const name of migrations)await sql.unsafe(await readFile(new URL(name,migrationDir),'utf8'));
+ const key=new MasterKey(Buffer.alloc(32,17));
+ const user=await createUser(db,{email:'contact-runtime@example.test',username:'contactruntime',role:'member'});
+ const other=await createUser(db,{email:'other-runtime@example.test',username:'otherruntime',role:'member'});
+ await saveClient(db,key,{provider:'google',clientId:'synthetic-client',clientSecret:'synthetic-secret',redirectUri:'https://example.test/callback',actorUserId:user.id});
+ const c=await upsertConnection(db,key,{ownerUserId:user.id,provider:'google',tokens:{accessToken:'synthetic',refreshToken:'synthetic-refresh',expiresIn:3600,grantedScopes:'https://www.googleapis.com/auth/contacts.readonly'},accountEmail:'synthetic@example.test',providerAccountId:'synthetic-id',requestedCapabilities:['google.contacts.read']});
+ await setCapability(db,{connection:c,capability:'google.contacts.read',enabled:true,actorUserId:user.id});
+ const due=await dueOrigins(db);assert.equal(due.length,1);
+ const remote={resourceName:'people/fixture',etag:'one',names:[{displayName:'Synthetic Contact'}],emailAddresses:[{value:'synthetic@example.test'}]};
+ const response=contacts=>async()=>new Response(JSON.stringify({connections:contacts,nextSyncToken:'synthetic-cursor'}));
+ const run=fetchImpl=>syncOrigin(db,due[0].id,{masterKey:key,fetchImpl});
+ assert.equal((await run(response([remote]))).counts.created,1);
+ assert.equal((await run(response([remote]))).counts.unchanged,1);
+ const [shape]=await db.query(`select jsonb_typeof(emails) as type from contacts where owner_user_id=$1`,[user.id]);assert.equal(shape.type,'array');
+ await db.query(`update contacts set name='Synthetic local edit' where owner_user_id=$1`,[user.id]);
+ assert.equal((await run(response([remote]))).counts.unchanged,1);
+ assert.equal((await run(response([{resourceName:remote.resourceName,metadata:{deleted:true}}]))).counts.conflicts,1);
+ assert.equal((await db.query(`select id from contacts where owner_user_id=$1`,[user.id])).length,1);
+ const status=await providerStatus(db,user.id);assert.equal(status.connections.length,1);assert.equal(status.contacts.length,1);
+ assert.equal((await providerStatus(db,other.id)).connections.length,0);
+ assert.ok(!JSON.stringify(status).includes('synthetic-cursor'));
+ assert.equal((await listOrigins(db,user.id))[0].status,'idle');
+ console.log(JSON.stringify({result:'PASS',database:'real PostgreSQL 16 / postgres.js',provider:'synthetic injected HTTP responses',migrations:migrations.length,checks:12,externalProviderAcceptance:'NOT EXERCISED'}));
+} finally {await sql.end();}

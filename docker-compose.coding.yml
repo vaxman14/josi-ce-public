@@ -1,0 +1,21 @@
+# Explicit opt-in. Pre-pull a reviewed Node image pinned by immutable digest.
+# Only the helper receives Docker authority. Sandboxes receive no bind mounts.
+services:
+  web:
+    environment:
+      JOSI_CODING_HELPER_SOCKET: /run/josi-coding/helper.sock
+    volumes:
+      - coding_socket:/run/josi-coding:ro
+  coding-helper:
+    image: ${JOSI_INSTALLER_IMAGE:?Set the numbered installer image}
+    entrypoint: [python3, /opt/josi-installer/coding_helper.py]
+    command: [--socket, /run/josi-coding/helper.sock, --socket-gid, "1000", --image, "${JOSI_CODING_IMAGE:?Set a reviewed Node image with @sha256 digest}"]
+    restart: unless-stopped
+    network_mode: none
+    read_only: true
+    tmpfs: [/tmp:size=16m,noexec,nosuid,nodev]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - coding_socket:/run/josi-coding
+volumes:
+  coding_socket:

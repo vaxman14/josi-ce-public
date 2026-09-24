@@ -1,0 +1,44 @@
+import {afterEach,beforeEach,describe,it,expect} from 'vitest';
+import express from 'express';
+import type {Server} from 'node:http';
+import type {AddressInfo} from 'node:net';
+import {MasterKey} from '@josi-ce/core';
+import {saveClient,setCapability,upsertConnection,type ConnectionRow} from '@josi-ce/connectors';
+import {testDb,type TestDb} from '../../../packages/core/test/helpers.js';
+import {createUser} from './fixtures.js';
+import {calendarRoutes} from '../src/http/calendarRoutes.js';
+const bytes=Buffer.alloc(32,42),key=new MasterKey(bytes);
+let db:TestDb,server:Server,base:string,owner:string,other:string,source:string,connection:ConnectionRow;
+let urls:string[];
+beforeEach(async()=>{
+ db=await testDb();owner=(await createUser(db,{email:'owner@fixture.test',username:'calendar-owner',role:'super_admin'})).id;other=(await createUser(db,{email:'other@fixture.test',username:'calendar-other',role:'member'})).id;
+ await saveClient(db,key,{provider:'google',clientId:'fixture-client',clientSecret:'fixture-secret',redirectUri:'https://fixture.test/callback',actorUserId:owner});
+ connection=await upsertConnection(db,key,{ownerUserId:owner,provider:'google',accountEmail:'calendar@fixture.test',providerAccountId:'fixture-calendar',tokens:{accessToken:'fixture-token',refreshToken:'fixture-refresh',expiresIn:3600,grantedScopes:'https://www.googleapis.com/auth/calendar.readonly'},requestedCapabilities:['google.calendar.read']});
+ await setCapability(db,{connection,capability:'google.calendar.read',enabled:true,actorUserId:owner});
+ const [row]=await db.query<{id:string}>(`insert into calendar_sources(owner_user_id,connection_id,provider_calendar_id,name) values($1,$2,'secondary@fixture.test','Secondary') returning id`,[owner,connection.id]);source=row.id;urls=[];
+ const fetchImpl=(async(url:RequestInfo|URL)=>{urls.push(String(url));const event={id:'instance',summary:'Fixture',start:{date:'2026-09-01'},end:{date:'2026-09-02'}};return new Response(JSON.stringify(String(url).includes('/events?')?{items:[event]}:event),{headers:{'content-type':'application/json'}});}) as typeof fetch;
+ const app=express();app.use(express.json());app.use((req,_res,next)=>{const id=req.header('x-test-user');if(id)req.user={id,role:'member'} as any;next();});
+ app.use('/calendar',calendarRoutes({db,fetchImpl,masterKey:{path:'/fixture',readFile:()=>Buffer.from(bytes.toString('base64')),statFile:()=>({mode:0o600})}}));
+ server=app.listen(0,'127.0.0.1');await new Promise<void>(resolve=>server.once('listening',resolve));base=`http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+});
+afterEach(async()=>{await new Promise<void>(resolve=>server.close(()=>resolve()));});
+const range='/calendar/events?start=2026-09-01T00:00:00Z&end=2026-09-03T00:00:00Z';
+const get=async(path:string,user=owner)=>{const r=await fetch(base+path,{headers:{'x-test-user':user}});return {status:r.status,body:await r.json() as any};};
+describe('calendar route source boundaries',()=>{
+ it('preserves exact source identity in list and detail',async()=>{const list=await get(range);expect(list.body.events[0]).toMatchObject({eventId:'instance',sourceId:source,connectionId:connection.id,providerCalendarId:'secondary@fixture.test',sourceName:'Secondary',provider:'google',account:'calendar@fixture.test'});const detail=await get(`/calendar/events/${source}/instance`);expect(detail.body.event).toMatchObject(list.body.events[0]);expect(urls.every(u=>u.includes('/calendars/secondary%40fixture.test/events'))).toBe(true);});
+ it('reports selected revoked or disabled sources instead of silently omitting them',async()=>{await setCapability(db,{connection,capability:'google.calendar.read',enabled:false,actorUserId:owner});const result=await get(range);expect(result.body.events).toEqual([]);expect(result.body.sourceErrors).toHaveLength(1);expect(urls).toEqual([]);await db.query(`update connections set status='revoked' where id=$1`,[connection.id]);expect((await get(range)).body.sourceErrors).toHaveLength(1);});
+ it('denies cross-owner details, selection mutation, and anonymous reads',async()=>{expect((await get(`/calendar/events/${source}/instance`,other)).status).toBe(404);const r=await fetch(`${base}/calendar/sources/${source}`,{method:'PUT',headers:{'x-test-user':other,'content-type':'application/json'},body:JSON.stringify({selected:false})});expect(r.status).toBe(404);expect((await get(range,other)).body.events).toEqual([]);expect((await get(range,'')).status).toBe(401);expect(urls).toEqual([]);});
+ it('bounds malformed and excessive ranges before contacting any account',async()=>{expect((await get('/calendar/events?start=no&end=no')).status).toBe(400);expect((await get('/calendar/events?start=2026-01-01&end=2027-01-01')).status).toBe(400);expect(urls).toEqual([]);});
+ it('serves the synchronized internal calendar without contacting Google',async()=>{
+   const [calendar]=await db.query<{id:string}>(`insert into calendars(owner_user_id,name,is_default) values($1,'Internal calendar',true) returning id`,[owner]);
+   await db.query(`insert into calendar_sync_origins(calendar_id,connection_id,owner_user_id,provider,provider_account_id,provider_calendar_id,last_sync_at) values($1,$2,$3,'google','fixture-calendar','primary',now())`,[calendar.id,connection.id,owner]);
+   const [event]=await db.query<{id:string}>(`insert into calendar_events(owner_user_id,calendar_id,title,starts_at,ends_at,timezone,sync_state) values($1,$2,'Internal event','2026-09-01T15:00:00Z','2026-09-01T15:30:00Z','America/Los_Angeles','synced') returning id`,[owner,calendar.id]);
+   const calendars=await get('/calendar/internal/calendars');
+   expect(calendars.body.calendars[0]).toMatchObject({id:calendar.id,name:'Internal calendar',provider:'google',account:'calendar@fixture.test',syncStatus:'idle'});
+   const listed=await get('/calendar/internal/events?start=2026-09-01T00:00:00Z&end=2026-09-02T00:00:00Z');
+   expect(listed.body.events[0]).toMatchObject({id:event.id,title:'Internal event',calendarId:calendar.id,calendarName:'Internal calendar',syncState:'synced'});
+   expect((await get(`/calendar/internal/events/${event.id}`)).body.event.id).toBe(event.id);
+   expect((await get(`/calendar/internal/events/${event.id}`,other)).status).toBe(404);
+   expect(urls).toEqual([]);
+ });
+});

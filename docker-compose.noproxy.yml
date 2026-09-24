@@ -1,0 +1,22 @@
+# Bring your own reverse proxy.
+#
+# The bundled Caddy handles automatic HTTPS for most installations. Operators
+# who already terminate TLS — an existing nginx, Traefik, a corporate load
+# balancer — layer this file on top to publish the app directly and skip Caddy:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.noproxy.yml \
+#     up -d --scale caddy=0
+#
+# Then point your proxy at http://<host>:${JOSI_WEB_PORT:-8080}.
+#
+# Your proxy MUST terminate TLS. Josi sets secure, httpOnly session cookies;
+# served over plain http they are dropped by the browser and sign-in silently
+# fails. Set JOSI_COOKIE_SECURE=false only for local development.
+#
+# Forward X-Forwarded-For and X-Forwarded-Proto so client addresses in the audit
+# log are real rather than your proxy's.
+
+services:
+  web:
+    ports:
+      - "${JOSI_WEB_PORT:-8080}:8080"

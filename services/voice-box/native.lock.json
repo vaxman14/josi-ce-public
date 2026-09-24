@@ -1,0 +1,74 @@
+{
+  "files": [
+    {
+      "path": "amd64/libgomp1_12.2.0-14+deb12u1_amd64.deb",
+      "url": "https://snapshot.debian.org/file/3b337b2fec0382e12d81f71ee91472b6beda2e52",
+      "sha256": "48fec46bda7f5b1638b9e959889bfbc20491247d402d120bb152687eb48143d7",
+      "size": 115772,
+      "package": "libgomp1",
+      "version": "12.2.0-14+deb12u1",
+      "kind": "debian-binary",
+      "architecture": "amd64"
+    },
+    {
+      "path": "arm64/libgomp1_12.2.0-14+deb12u1_arm64.deb",
+      "url": "https://snapshot.debian.org/file/c7cc7281ba50a41d68e256f1a0eb985320e0a715",
+      "sha256": "a48b70dd1a95585466b40bd94564bce56ebcb2566e49ccdb6441e996aaab2098",
+      "size": 104092,
+      "package": "libgomp1",
+      "version": "12.2.0-14+deb12u1",
+      "kind": "debian-binary",
+      "architecture": "arm64"
+    },
+    {
+      "path": "amd64/libgfortran5_12.2.0-14+deb12u1_amd64.deb",
+      "url": "https://snapshot.debian.org/file/2a22dc9529ce60e559b8141ae195430099b500e4",
+      "sha256": "63d38775d20c425c1f00914b52167ae0e3b4639facdb0aa734877279fb716fbb",
+      "size": 792696,
+      "package": "libgfortran5",
+      "version": "12.2.0-14+deb12u1",
+      "kind": "debian-binary",
+      "architecture": "amd64"
+    },
+    {
+      "path": "arm64/libgfortran5_12.2.0-14+deb12u1_arm64.deb",
+      "url": "https://snapshot.debian.org/file/16016d5e30f943b9d3fc19c5b74b737177d3d6b8",
+      "sha256": "583497cf5a95960c11f2006586050375c4adbc4b0c569a7e7df346f2bf380cbc",
+      "size": 339792,
+      "package": "libgfortran5",
+      "version": "12.2.0-14+deb12u1",
+      "kind": "debian-binary",
+      "architecture": "arm64"
+    },
+    {
+      "path": "amd64/libquadmath0_12.2.0-14+deb12u1_amd64.deb",
+      "url": "https://snapshot.debian.org/file/b3b3f5041a61be281e49c8b7a597a7677e0e080f",
+      "sha256": "3f0c9a4c730da2fdab001cae596625438598fd2996d29d888feeb4c1cdc9011f",
+      "size": 144616,
+      "package": "libquadmath0",
+      "version": "12.2.0-14+deb12u1",
+      "kind": "debian-binary",
+      "architecture": "amd64"
+    },
+    {
+      "path": "arm64/libopenblas0-pthread_0.3.21+ds-4_arm64.deb",
+      "url": "https://snapshot.debian.org/file/7fab4268a86951bfb31d46c087bc336f0c46b872",
+      "sha256": "76fa7011c38cbc77057f7c4364f8d9c3ef58696beda666806f211ce019157c72",
+      "size": 4531912,
+      "package": "libopenblas0-pthread",
+      "version": "0.3.21+ds-4",
+      "kind": "debian-binary",
+      "architecture": "arm64"
+    },
+    {
+      "path": "amd64/libopenblas0-pthread_0.3.21+ds-4_amd64.deb",
+      "url": "https://snapshot.debian.org/file/450086f4d2e28213668727429b8cf6b3e8b85617",
+      "sha256": "4f7e4561dbfa9286c671c91350204fbda7afad675500e59cd4a56f84604844f8",
+      "size": 6709044,
+      "package": "libopenblas0-pthread",
+      "version": "0.3.21+ds-4",
+      "kind": "debian-binary",
+      "architecture": "amd64"
+    }
+  ]
+}
