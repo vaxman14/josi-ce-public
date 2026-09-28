@@ -282,6 +282,10 @@ device, other apps, websites, location, emergencies or actual screen time.
 Josi CE includes no support entitlement, guaranteed response, or SLA. Read the
 [`Community Preview support policy`](SUPPORT.md) before opening a report.
 
+If Josi CE is useful to you and you want to support its continued development,
+[buy the creator a coffee](https://buymeacoffee.com/romanvaxman). Contributions
+are optional and do not purchase support, features, licences, or an SLA.
+
 ## Licence
 
 Code: **GNU AGPL v3** — see [`LICENSE`](LICENSE).

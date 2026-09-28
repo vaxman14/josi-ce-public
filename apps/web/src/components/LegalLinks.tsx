@@ -6,6 +6,7 @@ export const TERMS_URL = '/help/legal/index.html#terms-of-use';
 export const PRIVACY_URL = '/help/legal/index.html#privacy-notice';
 export const COOKIES_URL = '/help/legal/index.html#cookie-notice';
 export const LICENCE_URL = '/help/legal/index.html#software-and-paid-feature-licences';
+export const SUPPORT_CREATOR_URL = 'https://buymeacoffee.com/romanvaxman';
 
 export function LegalLinks({ className = '' }: { className?: string }) {
   return (
@@ -14,6 +15,7 @@ export function LegalLinks({ className = '' }: { className?: string }) {
       <a href={PRIVACY_URL} target="_blank" rel="noreferrer noopener">Privacy</a>
       <a href={COOKIES_URL} target="_blank" rel="noreferrer noopener">Cookies</a>
       <a href={LICENCE_URL} target="_blank" rel="noreferrer noopener">Licences</a>
+      <a href={SUPPORT_CREATOR_URL} target="_blank" rel="noreferrer noopener">☕ Support Josi CE</a>
     </nav>
   );
 }

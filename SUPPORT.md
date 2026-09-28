@@ -33,5 +33,9 @@ steps.
 - Paid support is not currently offered.
 - Maintainers cannot recover a lost `secrets/master.key`.
 
+Voluntary contributions can be made through
+[Buy Me a Coffee](https://buymeacoffee.com/romanvaxman). A contribution does
+not purchase support, priority, features, licences, or an SLA.
+
 This policy may change before a stable release. Changes apply prospectively and
 will be published in this repository.
